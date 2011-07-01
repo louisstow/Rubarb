@@ -1,0 +1,36 @@
+ALIENS
+
+[x] GetAliens
+[x] AddAlien: alien !REWORK
+[x] AbandonAlien: alien
+[x] RenameAlien: alien name
+
+INVENTORY
+
+[x] BuyItem: item
+[x] UseItem: item alien
+[x] SellItem: item
+[x] GetItems
+
+BATTLE
+
+[ ] Attack: alien move [battle]
+[ ] Skip: [battle]
+[ ] Switch: alien [battle]
+[ ] BattleRequests
+[ ] RequestBattle: type player
+
+PLAYERS
+
+[x] List: [friends] [area]
+[x] RequestFriend: friend
+[ ] RespondRequest: friend response
+[ ] GetRequests
+[ ] Login: username password | POST
+[ ] Register: username email password | POST
+
+TRADE
+
+[ ] RequestTrade: 
+[ ] Offer: [alien item]
+[ ] RespondTrade: response

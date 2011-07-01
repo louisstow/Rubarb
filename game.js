@@ -33,9 +33,13 @@ $(function() {
 			console.log("Dock");
 		});
 		
-		//VOLCANO
-		Crafty.e("2D, mouse").attr({w:1,h:1}).areaMap(new Crafty.polygon([273,95],[338,95],[386,194],[305,233],[204,194])).bind("mouseover", function() {
-			console.log("Volcano");
+		//STADIUM
+		Crafty.e("2D, mouse").attr({w:1,h:1}).areaMap(new Crafty.polygon([262,165],[330,165],[340,205],[256,205])).bind("mouseover", function() {
+			console.log("Stadium");
 		});
 	});
+	
+	function battle(team1, team2) {
+		
+	}
 });
