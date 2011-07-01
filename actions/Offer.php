@@ -16,14 +16,37 @@ if(isset($alien)) {
 	//enter the trade
 	I("TradeAlien")->create($trade, USER, $alien);
 	
+	//make sure the user can't use the alien
+	$a->status = 'limbo';
+	$a->update();
+	
 	ok();
 } else if(isset($item)) {
 	$i = I("Inventory")->get(USER, $item);
-	if(!$i || $i->quantity < $quantity) {
+	$ti = I("TradeItem")->get($trade, USER, $item);
+	
+	if(!$i) {
 		error("Don't have the item");
 	}
 	
-	I("TradeItem")->create($trade, USER, $item, $quantity);
+	//calculate the real amount based on existing trade
+	$realQuantity = ($ti) ? $ti->quantity + $i->quantity : $i->quantity;
+	
+	if($realQuantity < $quantity) {
+		error("Don't have the item");
+	}
+	
+	//if offer already exists, reset quantity
+	if($ti) {
+		$ti->quantity = $quantity;
+		$ti->update();
+	} else {
+		I("TradeItem")->create($trade, USER, $item, $quantity);
+	}
+	
+	//update the inventory
+	$i->quantity = $realQuantity - $quantity;
+	$i->update();
 	
 	ok();
 }
