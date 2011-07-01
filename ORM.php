@@ -308,6 +308,7 @@ class CRUD {
 		}
 		
 		$sql = substr($sql, 0, strlen($sql) - strlen($join));
+		echo $sql;
 		$q = ORM::query($sql, $where);
 		
 		$inslist = array();
