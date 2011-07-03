@@ -15,5 +15,7 @@ if(!$player) {
 	error("Error registering");
 }
 
+unset($player->playerPass);
+unset($player->_updateFlag);
 echo json_encode($player);
 ?>

@@ -5,29 +5,8 @@
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <link rel="stylesheet" href="http://code.jquery.com/qunit/git/qunit.css" type="text/css" media="screen" />
 <script type="text/javascript" src="http://code.jquery.com/qunit/git/qunit.js"></script>
-
-<script>
-function request(action, data, callback) {
-	$.ajax("../api.php?action=" + action, {
-		dataType: "html",
-		data: data,
-		success: callback
-	});
-}
-
-$(document).ready(function(){
-	module("Items");
-	
-	asyncTest("BuyItem", function() {
-		request("BuyItem", {item: 1}, function(data) {
-			console.log(data);
-			equals(data, "{status: 'ok'}", "Successful Item");
-			start();
-		});
-	});
-});
-</script>
-  
+<script type="text/javascript" src="tests.js"></script>
+<title>Client API Unit Tests</title>
 </head>
 <body>
 <h1 id="qunit-header">QUnit example</h1>

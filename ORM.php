@@ -308,7 +308,6 @@ class CRUD {
 		}
 		
 		$sql = substr($sql, 0, strlen($sql) - strlen($join));
-		echo $sql;
 		$q = ORM::query($sql, $where);
 		
 		$inslist = array();
@@ -427,6 +426,13 @@ class Results implements Iterator {
 	*/
 	public function result() {
 		return $this->data;
+	}
+	
+	/**
+	* Return the amount of data returned
+	*/
+	public function count() {
+		return count($this->data);
 	}
 	
 	/**

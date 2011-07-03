@@ -1,6 +1,5 @@
 <?php
 session_start();
-$_SESSION['id'] = 1;
 
 /**
 * If a user is suspected of hacking attempts,
