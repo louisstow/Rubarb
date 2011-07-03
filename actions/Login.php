@@ -6,11 +6,17 @@ $password = encrypt($password);
 $result = I("Player")->getMany(array("screenName" => $username, "playerPass" => $password));
 
 if($result->count()) {
+	//get the first user
 	$arr = $result->result();
-	$_SESSION['id'] = $arr[0]->playerID;
-	$arr[0]->status = "online";
-	$arr[0]->update();
-	echo $result->select("playerID,screenName,email,wins,loses,money,status,location,battleID")->toJSON();
+	$arr = $arr[0];
+	
+	$_SESSION['id'] = $arr->playerID;
+	$arr->status = "online";
+	$arr->update();
+	
+	unset($arr->playerPass);
+	unset($arr->_updateFlag);
+	echo json_encode($arr);
 } else {
 	error("Details incorrect");
 }
