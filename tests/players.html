@@ -4,22 +4,157 @@
 <head>
 <title>Character Animation Test</title>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://craftyjs.com/release/0.4.2/crafty.js"></script>
+<script type="text/javascript" src="http://localhost:88/crafty/Crafty/crafty.js"></script>
 <script type="text/javascript">
 $(function() {
 	Crafty.init(600, 500);
 	
-	Crafty.c("Skeleton", {
+	Crafty.sprite(1, "possel.png", {
+		Possel_head: [5, 3, 52, 57],
+		Possel_front: [5, 68, 60, 87],
+		Possel_back: [5, 162, 61, 73],
+		Possel_tail: [5, 234, 71, 115],
+		Possel_body: [5, 354, 87, 57]
+	});
+	
+	//set up the character
+	Crafty.c("Possel", {
 		head: null,
 		body: null,
 		tail: null,
 		front: null,
 		back: null,
 		
-		Skeleton: function() {
-			
+		init: function() {
+			this.tail = Crafty.e("2D, DOM, Possel_tail, Animation").attr({x: 114, y: -57}).origin("bottom left");
+			this.body = Crafty.e("2D, DOM, Possel_body").attr({x: 39, y: 7}).origin("center");
+			this.front = Crafty.e("2D, DOM, Possel_front").attr({x: 13, y: 28}).origin("top middle");
+			this.back = Crafty.e("2D, DOM, Possel_back").attr({x: 70, y: 42}).origin("top middle");
+			this.head = Crafty.e("2D, DOM, Possel_head").origin("right middle");
 		}
 	});
+	
+	Sprites = {
+		Possel: {
+			tail: []
+		}
+	};
+	
+	Crafty.c("Alien", {
+		head: null,
+		body: null,
+		tail: null,
+		front: null,
+		back: null,
+		
+		parent: null,
+		
+		init: function() {
+			this.parent = document.createElement("div");
+			this.parent.style.position = "absolute";
+			Crafty.stage.inner.appendChild(this.parent);
+		},
+		
+		Alien: function(type) {
+			var comps = "2D, DOM, Animation, " + type,
+				parts = "head body tail front back".split(' '),
+				part;
+			
+			for(part in parts) {
+				part = parts[part];
+				
+				//only set if defined
+				if(Crafty.isComp(type + "_" + part)) {
+					this[part] = Crafty.e(comps + "_" + part);
+					
+					//move to the container
+					Crafty.stage.inner.removeChild(this[part]._element);
+					this.parent.appendChild(this[part]._element);
+				}
+			}
+			
+			return this;
+		}
+	});
+	
+	possel = Crafty.e("Alien").Alien("Possel");
+	
+	/**
+	* Joint class
+	*
+	* x - X position of the joint
+	* y - Y position of the joint
+	* bind - Crafty object bound to this joint
+	* children - Array of children joints
+	*/
+	function Joint(x, y, bind) {
+		this.x = x;
+		this.y = y;
+		this.bind = bind;
+		
+		this.children = [];
+	}
+	
+	Joint.prototype = {
+		add: function(joint) {
+			this.children.push(joint);
+		},
+		
+		/**
+		* Move the X and Y position by the amount specified
+		*/
+		move: function(x, y) {
+			var i = 0, 
+				children = this.children, 
+				l = children.length, 
+				current;
+			
+			this.x += x;
+			this.y += y;
+			this.bind.x += x;
+			this.bind.y += y;
+			this.bind.origin(this.x, this.y);
+			
+			//loop over children joints and move
+			for(;i < l; ++i) {
+				children[i].move(x, y);
+			}
+		},
+		
+		rotate: function(deg) {
+			var i = 0, 
+				children = this.children, 
+				l = children.length, 
+				current,
+				theta = -1 * (deg % 360), //angle always between 0 and 359
+				rad = theta * Math.PI / 180,
+				ct = Math.cos(rad), //cache the sin and cosine of theta
+				st = Math.sin(rad),
+				x, y;
+			
+			this.bind.rotation += deg;
+			
+			//loop over children joints and move
+			for(;i < l; ++i) {
+				current = children[i];
+				x = this.x + (current.x - this.x) * ct + (current.y - this.y) * st;
+				y = this.y - (current.x - this.x) * st + (current.y - this.y) * ct;
+				
+				current.x = ~~x;
+				current.y = ~~y;
+				current.bind.origin(~~x, ~~y);
+				
+				current.rotate(deg);
+			}
+		}
+	};
+	
+	//root
+	body = new Joint(80, 34, possel.body);
+	body.add(new Joint(52, 27, possel.head));
+	body.add(new Joint(40, 27, possel.front));
+	body.add(new Joint(100, 42, possel.back));
+	body.add(new Joint(114, 0, possel.tail));
 });
 </script>
 </head>

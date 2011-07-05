@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Crafty Animator</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://localhost:88/crafty/Crafty/crafty.js"></script>
+<script type="text/javascript" src="assets/json2.js"></script>
+<script type="text/javascript">
+$(function() {
+	Crafty.init(500, 400);
+	
+	/**
+	* Alien Component
+	*/
+	Crafty.c("Alien", {
+		head: null,
+		body: null,
+		tail: null,
+		front: null,
+		back: null,
+		
+		parent: null,
+		
+		init: function() {
+			this.parent = document.createElement("div");
+			this.parent.style.position = "absolute";
+			Crafty.stage.inner.appendChild(this.parent);
+		},
+		
+		Alien: function(type) {
+			var comps = "2D, DOM, Animation, " + type,
+				parts = "head body tail front back".split(' '),
+				part;
+			
+			for(part in parts) {
+				part = parts[part];
+				
+				//only set if defined
+				if(Crafty.isComp(type + "_" + part)) {
+					this[part] = Crafty.e(comps + "_" + part);
+					
+					//move to the container
+					Crafty.stage.inner.removeChild(this[part]._element);
+					this.parent.appendChild(this[part]._element);
+				}
+			}
+			
+			return this;
+		}
+	});
+	
+	var $frames = $("#frames"),
+		$submit = $("#submit"),
+		$image = $("#image"),
+		$sprite = $("#sprite"),
+		$type = $("#type"),
+		$modal = $("#modal"),
+		framecurrent = 0,
+		framecount = 1000,
+		
+		parts = "head body tail front back".split(' '),
+		FRAMES = {},
+		CURRENT = 0;
+	
+	
+	$modal.hide();
+	$submit.click(function() {
+		var obj = eval('(' + $sprite.val() + ')'),
+			part;
+			
+		console.log(obj);
+		Crafty.sprite(1, $image.val(), obj);
+		
+		ENT = Crafty.e("Alien").Alien($type.val());
+		for(part in parts) {
+			part = parts[part];
+			if(ENT[part]) {
+				ENT[part].addComponent("Draggable, Rotatable");
+			}
+		}
+		
+		FRAMES['0'] = getState();
+	});
+	
+	function generateFrames() {
+		var html = "";
+		for(;framecurrent <= framecount; framecurrent+=5) {
+			html += "<span>"+framecurrent+"</span>";
+		}
+		$frames.html(html);
+	}
+	
+	function getState() {
+		var temp = {},
+			part;
+			
+		for(part in parts) {
+			part = parts[part];
+			if(!ENT[part]) continue;
+		
+			temp[part] = {
+				x: ENT[part]._x,
+				y: ENT[part]._y,
+				rotation: ENT[part]._rotation,
+				alpha: ENT[part]._alpha,
+			};
+		}
+		
+		return temp;
+	}
+	
+	function putState(state) {
+		var part, props;
+		
+		//loop over the alien parts
+		for(part in parts) {
+			part = parts[part];
+			if(!ENT[part]) continue;
+			
+			//loop over the properties for each part
+			props = state[part];
+			for(prop in props) {
+				ENT[part][prop] = props[prop];
+			}
+		}
+	}
+	
+	function modal(text) {
+		$modal.show().css({left: $(window).width() / 2 - 250, top: $(window).height() / 2 - 200});
+		$modal.find("textarea").val(text);
+		
+		$modal.find("div").click(function(e) {
+			$modal.hide();
+		});
+	}
+	
+	$("#export").click(function() {
+		var text = JSON.stringify(FRAMES);
+		modal(text);
+		console.log(text);
+	});
+	
+	generateFrames();
+	
+	$("#frames span").live("mousedown", function(e) {
+		var CURRENT = +$(this).text(),
+			f = FRAMES[CURRENT],
+			part;
+		
+		//if rightclick, clear the keyframe
+		if(e.which === 3) {
+			delete FRAMES[CURRENT];
+			$(this).removeClass("keyed");
+			
+			return false;
+		}
+		
+		$("#frames span").removeClass("selected");
+		$(this).addClass("keyed selected");
+		
+		//if frame has been defined, update the view
+		if(f) {
+			putState(f);
+		} else {
+			//otherwise save the current state
+			FRAMES[CURRENT] = getState();
+		}
+	});
+	
+	var nop = function() { return false; };
+	//stop draggable
+	$("#frames").bind("selectstart", nop).bind("contextmenu", nop);
+	
+	ent = Crafty.e("2D, Animation").addAnimation("test", {5: {alpha: 0.5}, 10: {alpha:1.0}});
+});
+</script>
+<style>
+html, body { font-family:Verdana; height:100%; padding:0; margin:0; background:#eee }
+#frames { 
+	width: 100px; 
+	border-left:1px solid #aaa; 
+	font-size:12px; 
+	position:absolute; 
+	right:0; 
+	overflow:auto; 
+	height:100%; 
+	background:#fff;
+	cursor: default
+}
+#frames span { display:block; border-bottom:1px solid #aaa; padding:3px; text-align:center }
+#frames span:hover { background:#eee }
+#frames span.keyed { background:#FFBACB }
+#frames span.selected { border:2px solid #444; margin-top:-1px }
+
+#cr-stage { border:1px solid #ccc; background:#fff; width:500px; height:400px; position:absolute; top:30%; left:30% }
+#toolbar { position:absolute; top:0; left:0; right:101px; padding:5px; background:#fff; border-bottom:1px solid #aaa; height:31px; font-size:14px }
+
+#modal { border:5px solid #444; background:#fff; position:absolute; width:500px; height:400px; border-radius:5px; padding:5px; }
+#modal textarea { width:100%; height:100%; border:0; outline:0; resize:none }
+#modal div { 
+	position:absolute; 
+	right:-10px; 
+	top:-10px; 
+	width:20px; 
+	height:20px; 
+	border:2px solid red; 
+	border-radius:20px; 
+	text-align:center; 
+	background:#fff;
+	font-size:14px;
+	cursor: pointer
+}
+</style>
+</head>
+
+<body>
+<div id="frames">
+
+</div>
+
+<div id="cr-stage">
+
+</div>
+
+<div id="toolbar">
+<label>Type: <input type="text" id="type" /></label>
+<label>Image: <input type="text" id="image" /></label>
+<label>Sprite: <input type="text" id="sprite" /></label> <button id="submit">Load</button>
+
+<button id="export">Export</button>
+<button id="play">Play</button>
+</div>
+
+<div id="modal"><div>x</div><textarea></textarea></div>
+</body>
+</html>
