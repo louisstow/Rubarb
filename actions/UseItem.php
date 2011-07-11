@@ -1,6 +1,6 @@
 <?php
 load("Item, Inventory, Alien");
-data("item, alien");
+data("item, alien, battle");
 
 $inv = I("Inventory")->get(USER, $item);
 
@@ -12,8 +12,23 @@ if(!$inv || $inv->quantity < 1) {
 $item = I("Item")->get($item) or error("No item found");
 $alien = I("Alien")->get($alien);
 
-if($alien->playerID != USER) {
-	hacking();
+if(!$alien || $alien->playerID != USER) {
+	error("No alien found");
+}
+
+//if in a battle, ensure your turn
+if($me->battleID || isset($battle)) {
+	if($battle->turn != USER) {
+		error("Not your turn");
+	}
+	
+	if(isset($battle)) {
+		$battle = I("Battle")->get($battle); 
+	} else if($me->battleID) {
+		$battle = I("Battle")->get($me->battleID);
+		//grab the alien snapshot instead
+		$alien = I("BattleSnapshot")->get($battle, $alien->alienID);
+	} 
 }
 
 $alien->attack += $item->attack;
@@ -24,6 +39,13 @@ $alien->hunger += $item->hunger;
 $alien->thirst += $item->thirst;
 $alien->hp += $item->hp;
 $alien->update();
+
+//log the use of the item
+if($me->battleID || isset($battle)) {
+	$aj = json_encode($alien);
+	$item = $item->itemName;
+	I("BattleLog")->create($battle->battleID, NOW(), "{a: 'item', i: '{$item}', w: {$aj}}");
+}
 
 //decrement the quantity
 $inv->quantity--;

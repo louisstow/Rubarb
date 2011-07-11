@@ -47,6 +47,36 @@ $(function() {
 			}
 			
 			return this;
+		},
+		
+		apply: function(label, anim) {
+			var parts = "head body tail front back".split(' '),
+				part,
+				reel,
+				key;
+				
+			//for every body part
+			for(part in parts) {
+				part = parts[part];
+				reel = {};
+				//add the animation
+				for(key in anim) {
+					reel[key] = anim[key][part];
+				}
+				
+				this[part].addAnimation(label, reel);
+			}
+		},
+		
+		run: function(label) {
+			var parts = "head body tail front back".split(' '),
+				part;
+				
+			//for every body part
+			for(part in parts) {
+				part = parts[part];
+				this[part].playAnimation(label);
+			}
 		}
 	});
 	
@@ -81,10 +111,47 @@ $(function() {
 				});
 			});
 			
-			this.bind("Change", function() {
-				console.log("Change", CURRENT, getState());
-				FRAMES[CURRENT] = getState();
-			});
+			this.startUpdate();
+		},
+		
+		_updateState: function() {
+			FRAMES[CURRENT] = getState();
+		},
+		
+		pauseUpdate: function() {
+			this.unbind("Change", this._updateState);
+		},
+		
+		startUpdate: function() {
+			this.bind("Change", this._updateState);
+		}
+	});
+	
+	Crafty.c("EditorParent", {
+		parts: ["head", "body", "tail", "front", "back"],
+		count: 0,
+		
+		pauseUpdate: function() {
+			var part, self = this;
+			
+			for(part in this.parts) {
+				part = this.parts[part];
+				this[part].pauseUpdate();
+				this[part].bind("AnimationEnd", function() {
+					if(++self.count >= self.parts.length) {
+						self.trigger("AnimationEnd");
+					}
+				});
+			}
+		},
+		
+		startUpdate: function() {
+			var part;
+			
+			for(part in this.parts) {
+				part = this.parts[part];
+				this[part].startUpdate();
+			}
 		}
 	});
 	
@@ -107,10 +174,9 @@ $(function() {
 		var obj = eval('(' + $sprite.val() + ')'),
 			part;
 			
-		console.log(obj);
 		Crafty.sprite(1, $image.val(), obj);
 		
-		ENT = Crafty.e("Alien").Alien($type.val());
+		ENT = Crafty.e("Alien, EditorParent").Alien($type.val());
 		for(part in parts) {
 			part = parts[part];
 			if(ENT[part]) {
@@ -187,7 +253,6 @@ $(function() {
 		var f = FRAMES[CURRENT],
 			part;
 		
-		console.log(CURRENT, $(this).text());
 		//if rightclick, clear the keyframe
 		if(e.which === 3) {
 			delete FRAMES[CURRENT];
@@ -203,9 +268,24 @@ $(function() {
 		if(f) {
 			putState(f);
 		} else {
+			console.log(FRAMES[CURRENT]);
 			//otherwise save the current state
 			FRAMES[CURRENT] = getState();
 		}
+	});
+	
+	$("#play").click(function() {
+		//stop the update watcher whilst animating
+		ENT.pauseUpdate();
+		
+		ENT.apply("Test", FRAMES);
+		ENT.run("Test");
+		
+		//start it back up again
+		ENT.bind("AnimationEnd", function() {
+			console.log("START");
+			ENT.startUpdate();
+		});
 	});
 	
 	var nop = function() { return false; };

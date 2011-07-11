@@ -12,8 +12,13 @@ if(!file_exists("actions/" . $a . ".php")) {
 	hacking();
 }
 
-load("Player");
-$me = I("Player")->get(USER);
+if(!isset($_SESSION['id'])) {
+	//if user is not intending to Login
+	if($a != "Login") error("Please login");
+} else {
+	load("Player");
+	$me = I("Player")->get(USER);
+}
 
 include "actions/" . $a . ".php";
 ?>

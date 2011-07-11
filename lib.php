@@ -71,5 +71,5 @@ function ok() {
 	exit;
 }
 
-define("USER", $_SESSION['id']);
+if(isset($_SESSION['id'])) define("USER", $_SESSION['id']);
 ?>
