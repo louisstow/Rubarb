@@ -72,8 +72,6 @@ if($chance < 1) {
 	$p->speed += $move->speedSelf;
 
 	$p->exp -= $move->expSelf;
-	$p->thirst += $move->thirstSelf;
-	$p->hunger += $move->hungerSelf;
 	$p->hp -= $move->hpSelf;
 
 	//apply to opponent
@@ -82,8 +80,6 @@ if($chance < 1) {
 	$o->speed -= $move->speedOpp;
 
 	$o->exp -= $move->expOpp;
-	$o->thirst += $move->thirstOpp;
-	$o->hunger += $move->hungerOpp;
 	$o->hp -= $damage;
 
 	$fainted = "false";
@@ -98,6 +94,7 @@ if($chance < 1) {
 		//swap the opponents alien with the next
 		if($next) {
 			$pvp->{$opp . "Alien"} = $next;
+			$fainted = $next;
 		} else {
 			//WINNER
 			$win = "true";

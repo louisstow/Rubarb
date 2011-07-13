@@ -11,8 +11,6 @@ class Item extends ORM {
 		"defense" => INT,
 		"speed" => INT,
 		"exp" => INT,
-		"hunger" => INT,
-		"thirst" => INT,
 		"hp" => INT,
 		"cost" => INT
 	);

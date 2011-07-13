@@ -14,14 +14,12 @@ class BattleSnapshot extends ORM {
 		"speed" => INT,
 		"exp" => INT,
 		"level" => INT,
-		"hunger" => INT,
-		"thirst" => INT,
 		"hp" => INT
 	);
 	
 	public static function setup($battle, $player, $friend) {
 		ORM::query("INSERT INTO battle_snapshot 
-					SELECT {$battle}, alienID, alienAlias, playerID, species, attack, defense, speed, exp, level, hunger, thirst, hp
+					SELECT {$battle}, alienID, alienAlias, playerID, species, attack, defense, speed, exp, level, hp
 					FROM aliens
 					WHERE (playerID = ? OR playerID = ?) AND status = 'carried'", array($player, $friend));
 	}

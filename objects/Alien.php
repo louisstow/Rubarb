@@ -13,8 +13,6 @@ class Alien extends ORM {
 		"speed" => INT,
 		"exp" => INT,
 		"level" => INT,
-		"hunger" => INT,
-		"thirst" => INT,
 		"hp" => INT,
 		"status" => STRING
 	);
@@ -25,12 +23,18 @@ class Alien extends ORM {
 	*/
 	public static function getNext($user) {
 		//grab the first alien the user is carrying
-		$q = ORM::query("SELECT alienID FROM aliens WHERE playerID = ? AND status = 'carried' LIMIT 1", array($user));
+		$q = ORM::query("SELECT alienID FROM aliens WHERE playerID = ? AND status = 'carried' ORDER BY order LIMIT 1", array($user));
 		$data = $q->fetch(PDO::FETCH_ASSOC);
 		
 		if($data) {
 			return $data['alienID'];
 		} else return false;
+	}
+	
+	public static function heal($user) {
+		ORM::query("UPDATE aliens 
+					SET hp = 100, status = 'carried', exp = level * 10
+					WHERE playerID = ? AND (status = 'carried' OR status = 'fainted')", array($user));
 	}
 }
 ?>

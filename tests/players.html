@@ -6,7 +6,7 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script type="text/javascript" src="../../crafty/Crafty/crafty.js"></script>
 <script type="text/javascript" src="animations.js"></script>
-<script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
+<!--<script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>-->
 <script type="text/javascript">
 $(function() {
 	Crafty.init(600, 500);
@@ -100,6 +100,10 @@ $(function() {
 			}
 			
 			return this;
+		},
+		
+		flip: function() {
+			this.parent.setAttribute("class", "flip");
 		}
 	});
 	
@@ -110,6 +114,15 @@ $(function() {
 	});
 });
 </script>
+<style>
+.flip {
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: fliph; /*IE*/
+}
+</style>
 </head>
 
 <body>

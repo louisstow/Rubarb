@@ -11,8 +11,20 @@ if(!$inv || $inv->quantity < 1) {
 
 $item = I("Item")->get($item);
 
+$diff = array(
+	"water" => 0,
+	"jungle" => 10,
+	"gas" => 15,
+	"ice" => 20,
+	"fire" => 30,
+	"rock" => 50,
+	"gas" => 100
+);
+
+$cost = ($item->cost / 2) + (($item->cost / 2) * ($diff[$me->location] / 100));
+
 //add money
-$me->money += $item->cost / 2;
+$me->money += $cost;
 $me->update();
 
 //decrement the quantity

@@ -35,8 +35,6 @@ $alien->attack += $item->attack;
 $alien->defense += $item->defense;
 $alien->speed += $item->speed;
 $alien->exp += $item->exp;
-$alien->hunger += $item->hunger;
-$alien->thirst += $item->thirst;
 $alien->hp += $item->hp;
 $alien->update();
 

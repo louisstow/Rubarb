@@ -10,15 +10,11 @@ class Moves extends ORM {
 		"defenseSelf" => INT,
 		"speedSelf" => INT,
 		"expSelf" => INT,
-		"hungerSelf" => INT,
-		"thirstSelf" => INT,
 		"hpSelf" => INT,
 		"attackOpp" => INT,
 		"defenseOpp" => INT,
 		"speedOpp" => INT,
 		"expOpp" => INT,
-		"hungerOpp" => INT,
-		"thirstOpp" => INT,
 		"hpOpp" => INT
 	);
 	
