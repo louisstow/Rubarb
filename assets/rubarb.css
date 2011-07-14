@@ -21,6 +21,10 @@ a {
 	cursor: pointer;
 }
 
+b {
+	font-family: Georgia
+}
+
 .button {
 	background:#B0E8DC;
 	border-radius: 5px;
@@ -55,6 +59,11 @@ a.active {
 	border:1px solid #fff;
 	background:#fff;
 	float:left
+}
+
+.text {
+	font-size:18px;
+	padding: 5px;
 }
 
 .stats {
@@ -115,6 +124,20 @@ a.active {
 	background:#fff;
 	width:100%;
 	height:100%;
+	overflow: auto;
+}
+
+#train-list h3 {
+	margin: 0;
+}
+
+#train-list .move {
+	padding: 10px;
+	cursor: pointer;
+}
+
+#train-list .move:nth-child(odd) {
+	background: #eee;
 }
 
 #train-left, #battle-left {
@@ -139,11 +162,143 @@ a.active {
 	position: absolute;
 	left: 200px;
 	top: 300px;
+	padding: 20px
 }
 
-h2, h3 {
+#login { 
+	width: 300px;
+	height: 180px;
+	left: 250px;
+	top: 200px;
+	position: absolute;
+	padding:20px;
+}
+
+#login label, #register label {
+	float: left;
+	width: 300px;
+	display: block;
+	margin: 10px 0;
+	font-size: 18px;
+	line-height: 40px
+}
+
+#login input, #register input {
+	float: right;
+	width: 180px;
+	font-size: 18px;
+	padding: 5px;
+}
+
+#register { 
+	width: 300px;
+	height: 250px;
+	left: 250px;
+	top: 175px;
+	position: absolute;
+	padding:20px;
+}
+
+#dialog {
+	width: 600px;
+	margin: auto;
+	background: #111;
+	opacity: 0.8;
+	height: 30px;
+	border: 3px solid #666;
+	border-radius: 4px;
+	display: none;
+	position: absolute;
+	color: #eee;
+	padding:5px;
+	left: 100px;
+	top: -50px;
+	line-height: 25px;
+	text-align: center
+}
+
+#choose {
+	position: absolute;
+	top: 150px;
+	left:150px;
+}
+
+#choose .box {
+	width: 150px;
+	height: 250px;
+	float: left;
+	margin-right: 20px;
+	text-align: center;
+	padding: 10px 5px 0 5px;
+	cursor: pointer;
+}
+
+#choose .box div {
+	width: 128px;
+	height: 128px;
+	background-color: #fff;
+	background-image: url('images/aliens/choose.png');
+	margin: auto;
+	border: 2px solid #62D2BA;
+}
+
+#choose .box span {
+	font-size: 12px
+}
+
+#choose .one div {
+	background-position: 0 0;
+	left: 50px;
+}
+
+#choose .two div {
+	background-position: -128px 0;
+	left: 220px;
+}
+
+#choose .three div {
+	background-position: -256px 0;
+	left: 500px;
+}
+
+#aliens, #items {
+	height:100%;
+	padding: 20px;
+}
+
+#aliens .alien, #items .item {
+	margin-bottom:10px;
+	padding: 10px
+}
+
+#aliens .alien h2, #items .item h2 {
+	margin-left: 60px;
+}
+
+#aliens .alien span, #items .item span {
+	margin: 0 10px 0 10px;
+}
+
+#aliens .actions, #items .actions {
+	float: right;
+	margin-top: -30px
+}
+
+#menu {
+	background: #444;
+	color: #eee;
+	height: 30px;
+	border-bottom:2px solid #aaa
+}
+
+h2 {
 	margin:-2px 0 5px 0;
 	text-shadow: #fff 1px 1px 0;
 	font-family:'Neucha', sans-serif;
 	font-weight:normal
+}
+
+h3 {
+	font-family: 'PT Sans', Arial, sans-serif;
+	font-weight:normal;
 }

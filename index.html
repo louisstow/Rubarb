@@ -4,12 +4,76 @@
 	<title>Crafty Critters</title>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	<script type="text/javascript" src="../crafty/Crafty/crafty.js"></script>
-	<script type="text/javascript" src="assets/rubarb.js"></script>
+	
 	<script type="text/javascript" src="assets/training.js"></script>
+	<script type="text/javascript" src="assets/login.js"></script>
+	<script type="text/javascript" src="assets/aliens.js"></script>
+	<script type="text/javascript" src="assets/items.js"></script>
+	
+	<script type="text/javascript" src="assets/rubarb.js"></script>
 	<link type="text/css" href="assets/rubarb.css" rel="stylesheet" />
 	<link href='http://fonts.googleapis.com/css?family=Neucha&v2' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=PT+Sans&v2' rel='stylesheet' type='text/css'>
 </head>
 <body>
+
+
+<!---- LOGIN --->
+<div id="login" class="box">
+<h2>Login to Crafty Critters</h2>
+<label>Username: <input type="text" id="login-user" /></label>
+<label>Password: <input type="password" id="login-pass" /></label>
+<div class="clearer"></div>
+<a class="button">Login</a> or <a id="reg-button" class="link">Register</a>
+</div>
+
+<!---- REGISTER --->
+<div id="register" class="box">
+<h2>Register to Crafty Critters</h2>
+<label>Username: <input type="text" id="reg-user" /></label>
+<label>Password: <input type="password" id="reg-pass" /></label>
+<label>Email: <input type="text" id="reg-email" /></label>
+<div class="clearer"></div>
+<a class="button">Register</a> or <a id="log-button" class="link">Login</a>
+</div>
+
+<!--- CHOOSE --->
+
+<div id="choose">
+	<div class="one box">
+	<div></div>
+	<h2>Dooth</h2>
+	<span>A water type alien. Has a blinding light to confuse enemies and a tooth that can pierce diamond.</span>
+	</div>
+	
+	<div class="two box">
+	<div></div>
+	<h2>Possel</h2>
+	<span>A marsupial-like fire type can fly by excreeting heat and a tail of over 300 degrees celcius.</span>
+	</div>
+	
+	<div class="three box">
+	<div></div>
+	<h2>Skarrier</h2>
+	<span>An ice type alien capable of speeds of over 300 kmh and a vicious bite.</span>
+	</div>
+</div>
+
+<!--- ALIENS --->
+
+<div id="aliens">
+	
+</div>
+
+<!---- ITEMS --->
+
+<div id="items">
+
+</div>
+
+<!---- MAP --->
+
+<div id="map"></div>
 
 <!---- BATTLE ------->
 <div id="battle-left">
@@ -37,7 +101,7 @@
 </div>
 
 <!-------- TRAIN ----->
-<div id="train-screen">
+<div id="train-screen" class="box">
 	<h2>Choose a difficulty</h2>
 	<a class="button" name="1">Easy</a>
 	<a class="button" name="2">Medium</a>
@@ -47,11 +111,9 @@
 
 <div id="train-left" class="box">
 <div class="profile"></div>
-<h2>Possel</h2>
+<h2></h2>
 
-<div class="health">
-	<div></div>
-</div>
+<div class="health"><div></div></div>
 
 <div class="clearer"></div>
 <div class="stats">
@@ -64,7 +126,7 @@
 
 <div id="train-right" class="box">
 <div class="profile"></div>
-<h2>Possel</h2>
+<h2></h2>
 
 <div class="health">
 	<div></div>
@@ -106,5 +168,11 @@
 <div id="hospital">
 
 </div>
+
+<div id="cr-stage">
+<div id="menu"><a id="menu-alien">Aliens</a> <a id="menu-item">Items</a> <a id="menu-back">Back</a></div>
+<div id="dialog"></div>
+</div>
+
 </body>
 </html>

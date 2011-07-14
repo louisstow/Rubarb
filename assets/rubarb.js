@@ -1,55 +1,70 @@
 //(function($, Crafty) {
 
-var Battle, Training, TrainScreen;
+var Login, Register, Battle, Training, Map, TrainScreen, Choose, Items, Aliens, 
+	ME,
+	ALIENS = [];
 
 $(function() {
 	Crafty.init(800, 600);
-
+	
+	Login = Crafty.e("Room").Room("Login", "login");
+	Register = Crafty.e("Room").Room("Register", "register");
+	Choose = Crafty.e("Room").Room("Choose", "choose");
 	Battle = Crafty.e("Room").Room("Battle", "battle-left, battle-right, battle-center, battle-menu");
 	TrainScreen = Crafty.e("Room").Room("TrainScreen", "train-screen");
 	Training = Crafty.e("Room").Room("Training", "train-left, train-right, train-menu");
+	Map = Crafty.e("Room").Room("Map", "map");
+	Aliens = Crafty.e("Room").Room("Aliens", "aliens");
+	Items = Crafty.e("Room").Room("Items", "items");
 	
-	Training.bind("Run", function() {
-		var $trainlist = $("#train-list");
-		
-		api("ListAttacks", function(data) {
-			
-		});
-	});
-
-	/**
-	* Training Screen
-	*/
-	TrainScreen.bind("Run", function() {
-		
-		$("#train-screen a").click(function() {
-			var choice = $(this).attr("name");
-			console.log(choice);
-			
-			api("Train", {level: choice}, function(data) {
-				console.log(data);
-			});
-		});
-	});
-	
-	//run the training screen
-	TrainScreen.run();
+	//check if logged in
+	if(!ME) {
+		api("IsLogged", function(data) {
+			//if not logged in, show the login screen
+			if(data.error) {
+				Login.run();
+			} else {
+				//else set the data to ME
+				ME = data;
+			}
+		}, false);
+	}
 });
 
 /**
 * Wrap AJAX request
 */
-function api(action, data, callback) {
+function api(action, data, callback, showError) {
 	//allow empty data
 	if(typeof data === "function") {
+		showError = callback;
 		callback = data;
-		data = {};
+		data = null;
+	}
+	
+	//default to show error
+	if(showError === undefined) {
+		showError = true;
 	}
 	
 	$.ajax("api.php?action=" + action, {
-		dataType: "html",
+		dataType: "text",
 		data: data,
-		success: callback
+		success: function(data) {	
+			try {
+			var data = eval('('+data+')');
+			} catch(err) {
+				console.log(data);
+			}
+			
+			//if there is an error, automaticall display
+			if(showError && data.error) {
+				Dialog(data.error);
+				return;
+			}
+			
+			if(callback) callback(data);
+		}
 	});
 };
 
@@ -68,6 +83,14 @@ function pull(list) {
 	}
 	
 	return frag;
+}
+
+function Dialog(msg) {
+	var $d = $("#dialog");
+	$d.show().html(msg).animate({top: -4}, 150).delay(msg.length * 100)
+		.animate({top: -50}, 150, function() {
+			$(this).hide().html("");
+		});
 }
 
 /**
@@ -99,10 +122,14 @@ var Rooms = (function() {
 		select: function(id) {
 			//exit the last room
 			if(selected) {
-				room[selected].exit();
+				rooms[selected].exit();
 			}
 			
 			selected = id;
+		},
+		
+		debug: function() {
+			console.log(rooms, selected);
 		}
 	};
 })();
@@ -110,28 +137,40 @@ var Rooms = (function() {
 Crafty.c("Room", {
 	frag: null,
 	id: null,
+	ids: null,
 	
 	Room: function(id, ids) {
 		Rooms.add(id, this);
 		
+		//initialize the Room events
+		if(window["init" + id]) {
+			window["init" + id].call(this);
+		}
+		
 		this.frag = pull(ids);
 		this.id = id;
+		this.ids = ids;
 		
 		return this;
 	},
 	
-	run: function() {
+	run: function(data) {
 		Rooms.select(this.id);
 		
 		Crafty.stage.elem.appendChild(this.frag);
-		this.trigger("Run");
+		this.trigger("Run", data);
 		return this;
 	},
 	
-	exit: function() {
-		Crafty.stage.elem.removeChild(this.frag);
+	exit: function() {	
+		this.frag = pull(this.ids);
+		
 		this.trigger("Exit");
 		return this;
+	},
+	
+	menu: function() {
+		
 	}
 });
 

@@ -62,5 +62,6 @@ if($level == "1") {
 
 $alien->update();
 
-ok();
+$data = array("alien" => $p, "opp" => $alien);
+echo json_encode($data);
 ?>

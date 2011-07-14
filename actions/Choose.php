@@ -7,11 +7,11 @@ if($me->status !== "new") {
 }
 
 if($choice == "1") {
-	$s = 1;
+	$s = 7; //DOOTH
 } else if($choice == "2") {
-	$s = 4;
+	$s = 1; //POSSEL
 } else if($choice == "3") {
-	$s = 7;
+	$s = 4; //SKARRIER
 }
 
 $species = I("Species")->get($s);

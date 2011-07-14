@@ -1,5 +1,5 @@
 <?php
-load("BattleTrain, Alien, Species, Moves");
+load("Battle, BattleTrain, Alien, Species, Moves");
 data("move");
 
 if(!$me->battleID) {
@@ -23,9 +23,11 @@ $species = I("Species")->get($alien->species);
 
 $chance = rand(1, 5) * $alien->speed / $train->speed;
 
+$log = array();
+
 //Player Missed
 if($chance < 1) {
-	echo "{a: 'missed', t: {$battle->turn}, m: '{$move->moveName}'}";
+	$log["mine"] = "{action: 'missed', move: '{$move->moveName}'}";
 	//take away EXP
 	$alien->exp -= $move->expSelf;
 	$alien->update();
@@ -35,7 +37,7 @@ if($chance < 1) {
 	$effective = Moves::environment($species->world, $me->location) * ($alien->attack * 0.2);
 
 	//bias based on the location of the battle
-	$bias = Moves::environment($species->world, $battle->environment) * ($alien->attack / 0.1);
+	$bias = Moves::environment($species->world, $battle->environment) * ($alien->attack * 0.1);
 
 	$damage = $effective + $bias + $move->hpOpp + $alien->attack - $train->defense;
 
@@ -54,6 +56,10 @@ if($chance < 1) {
 
 	$train->exp -= $move->expOpp;
 	$train->hp -= $damage;
+	
+	$a = json_encode($train);
+	$p = json_encode($alien);
+	$log["mine"] = "{action: 'attack', move: '{$move->moveName}', opp: {$a}, me: {$p}}";
 
 	//if the alien has lost, player wins training
 	if($train->hp <= 0) {
@@ -78,50 +84,57 @@ if($chance < 1) {
 		$alien->exp += $level * 5;
 		
 		$me->update();
+		$alien->update();
 		$battle->remove();
 		
 		$a = json_encode($alien);
-		echo "{a: 'win', n: {$a}}";
-	} else {
-		//fight back
-		$move = BattleTrain::chooseMove($train->species, $train->level, $train->exp);
 		
-		//effectivity based on the environment of the aliens
-		$effective = Moves::environment($me->location, $species->world) * ($alien->attack * 0.2);
-
-		$damage = $effective + $move->hpOpp + $train->attack - $alien->defense;
-
-		//apply moves to self
-		$train->defense += $move->defenseSelf;
-		$train->attack += $move->attackSelf;
-		$train->speed += $move->speedSelf;
-
-		$train->exp -= $move->expSelf;
-		$train->hp -= $move->hpSelf;
-
-		//apply to opponent
-		$alien->defense -= $move->defenseOpp;
-		$alien->attack -= $move->attackOpp;
-		$alien->speed -= $move->speedOpp;
-
-		$alien->exp -= $move->expOpp;
-		$alien->hp -= $damage;
-		
-		$win = "false";
-		//player lost
-		if($alien->hp <= 0) {
-			$me->update();
-			$battle->remove();
-			$win = "true";
-		}
-		
-		$a = json_encode($alien);
-		echo "{a: 'attack', m: '{$move->moveName}', w: {$alien}, win: '{$win}'}";
+		echo "{mine: {$log['mine']}, win: {$a}}";
+		exit;
 	}
-	
-	$alien->update();
-	$train->update();
-	
 }
 
+//fight back
+$move = BattleTrain::chooseMove($train->species, $train->level, $train->exp);
+
+//no move found, skip
+if(!$move) {
+	echo "{mine: {$log['mine']}, opp: {action: 'skip'}}";
+} else {
+	//effectivity based on the environment of the aliens
+	$effective = Moves::environment($me->location, $species->world) * ($alien->attack * 0.2);
+
+	$damage = $effective + $move->hpOpp + $train->attack - $alien->defense;
+
+	//apply moves to self
+	$train->defense += $move->defenseSelf;
+	$train->attack += $move->attackSelf;
+	$train->speed += $move->speedSelf;
+
+	$train->exp -= $move->expSelf;
+	$train->hp -= $move->hpSelf;
+
+	//apply to opponent
+	$alien->defense -= $move->defenseOpp;
+	$alien->attack -= $move->attackOpp;
+	$alien->speed -= $move->speedOpp;
+
+	$alien->exp -= $move->expOpp;
+	$alien->hp -= $damage;
+
+	$win = "false";
+	//player lost
+	if($alien->hp <= 0) {
+		$me->update();
+		$battle->remove();
+		$win = "true";
+	}
+
+	$a = json_encode($alien);
+	$o = json_encode($train);
+	echo "{mine: {$log['mine']}, opp: {action: 'attack', move: '{$move->moveName}', me: {$a}, opp: {$o}, win: {$win}}}";
+}
+
+$alien->update();
+$train->update();
 ?>

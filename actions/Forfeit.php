@@ -13,6 +13,11 @@ if(!$battle || $battle->turn != USER) {
 	error("Not your turn");
 }
 
+if($battle->type == "training") {
+	$battle->remove();
+	ok();
+}
+
 $pvp = I("BattlePVP")->get($battle->battleID);
 
 //determine who's the Player and who is the Opponent

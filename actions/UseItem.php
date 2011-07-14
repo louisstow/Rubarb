@@ -18,9 +18,6 @@ if(!$alien || $alien->playerID != USER) {
 
 //if in a battle, ensure your turn
 if($me->battleID || isset($battle)) {
-	if($battle->turn != USER) {
-		error("Not your turn");
-	}
 	
 	if(isset($battle)) {
 		$battle = I("Battle")->get($battle); 
@@ -28,7 +25,11 @@ if($me->battleID || isset($battle)) {
 		$battle = I("Battle")->get($me->battleID);
 		//grab the alien snapshot instead
 		$alien = I("BattleSnapshot")->get($battle, $alien->alienID);
-	} 
+	}
+	
+	if($battle->turn != USER) {
+		error("Not your turn");
+	}
 }
 
 $alien->attack += $item->attack;

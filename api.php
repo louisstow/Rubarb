@@ -13,8 +13,8 @@ if(!file_exists("actions/" . $a . ".php")) {
 }
 
 if(!isset($_SESSION['id'])) {
-	//if user is not intending to Login
-	if($a != "Login") error("Please login");
+	//if user is not intending to Login or Register
+	if($a != "Login" && $a != "Register") error("Please login");
 } else {
 	load("Player");
 	$me = I("Player")->get(USER);
