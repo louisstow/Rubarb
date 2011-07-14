@@ -5,10 +5,13 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	<script type="text/javascript" src="../crafty/Crafty/crafty.js"></script>
 	<script type="text/javascript" src="assets/rubarb.js"></script>
+	<script type="text/javascript" src="assets/training.js"></script>
 	<link type="text/css" href="assets/rubarb.css" rel="stylesheet" />
+	<link href='http://fonts.googleapis.com/css?family=Neucha&v2' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
+<!---- BATTLE ------->
 <div id="battle-left">
 
 </div>
@@ -21,25 +24,84 @@
 
 </div>
 
-<div id="battle-menu">
-	<button>Attack</button>
-	<button>Items</button>
-	<button>Aliens</button>
-	<button>Forfeit</button>
+<div id="battle-menu" class="box">
+	<h2>Battle Menu</h2>
+	<a class="tab">Attack</a>
+	<a class="tab">Items</a>
+	<a class="tab">Aliens</a>
+	<a class="button">Forfeit</a>
 	
-	<div id="battle-list">
+	<div id="battle-list" class="list">
 	
 	</div>
 </div>
 
+<!-------- TRAIN ----->
+<div id="train-screen">
+	<h2>Choose a difficulty</h2>
+	<a class="button" name="1">Easy</a>
+	<a class="button" name="2">Medium</a>
+	<a class="button" name="3">Hard</a>
+</div>
+
+
+<div id="train-left" class="box">
+<div class="profile"></div>
+<h2>Possel</h2>
+
+<div class="health">
+	<div></div>
+</div>
+
+<div class="clearer"></div>
+<div class="stats">
+	<span>Speed: <b class="speed"></b></span>
+	<span>Attack: <b class="attack"></b></span>
+	<span>Defense: <b class="defense"></b></span>
+	<span>EXP: <b class="exp"></b></span>
+</div>
+</div>
+
+<div id="train-right" class="box">
+<div class="profile"></div>
+<h2>Possel</h2>
+
+<div class="health">
+	<div></div>
+</div>
+
+<div class="clearer"></div>
+<div class="stats">
+	<span>Speed: <b class="speed"></b></span>
+	<span>Attack: <b class="attack"></b></span>
+	<span>Defense: <b class="defense"></b></span>
+	<span>EXP: <b class="exp"></b></span>
+</div>
+</div>
+
+<div id="train-menu" class="box">
+	<h2>Battle Menu</h2>
+	<a class="tab active">Attack</a>
+	<a class="button forfeit">Forfeit</a>
+	
+	<div id="train-list" class="list">
+		<div class="inner"></div>
+	</div>
+</div>
+
+<!----- SHOP --------->
 
 <div id="shop">
 
 </div>
 
+<!---------- TRADE ------>
+
 <div id="trade">
 
 </div>
+
+<!---------- HOPSITAL ------->
 
 <div id="hospital">
 

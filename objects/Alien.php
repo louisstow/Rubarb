@@ -23,7 +23,7 @@ class Alien extends ORM {
 	*/
 	public static function getNext($user) {
 		//grab the first alien the user is carrying
-		$q = ORM::query("SELECT alienID FROM aliens WHERE playerID = ? AND status = 'carried' ORDER BY order LIMIT 1", array($user));
+		$q = ORM::query("SELECT alienID FROM aliens WHERE playerID = ? AND status = 'carried' ORDER BY alienOrder LIMIT 1", array($user));
 		$data = $q->fetch(PDO::FETCH_ASSOC);
 		
 		if($data) {
