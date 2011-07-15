@@ -9,7 +9,7 @@
 <script type="text/javascript">
 $(function() {
 	Crafty.init(500, 400);
-	
+	SELECTED = null;
 	/**
 	* Alien Component
 	*/
@@ -28,10 +28,10 @@ $(function() {
 			Crafty.stage.inner.appendChild(this.parent);
 		},
 		
-		Alien: function(type) {
+		Alien: function(type, pos) {
 			var comps = "2D, DOM, Animation, " + type,
 				parts = "head body tail front back".split(' '),
-				part;
+				part, prop;
 			
 			for(part in parts) {
 				part = parts[part];
@@ -46,7 +46,28 @@ $(function() {
 				}
 			}
 			
+			if(pos) {
+				this.assemble(pos);
+			}
+			
 			return this;
+		},
+		
+		assemble: function(props) {
+			var parts = "head body tail front back".split(' '),
+				part, prop;
+			
+			for(part in parts) {
+				part = parts[part];
+				
+				//if positions defined, apply
+				if(props[part]) {
+					//loop over props and apply
+					for(prop in props[part]) {
+						this[part][prop] = props[part][prop];
+					}
+				}
+			}
 		},
 		
 		apply: function(label, anim) {
@@ -66,6 +87,8 @@ $(function() {
 				
 				this[part].addAnimation(label, reel);
 			}
+			
+			return this;
 		},
 		
 		run: function(label) {
@@ -77,37 +100,61 @@ $(function() {
 				part = parts[part];
 				this[part].playAnimation(label);
 			}
+			
+			return this;
+		},
+		
+		flip: function() {
+			this.parent.setAttribute("class", "flip");
 		}
 	});
 	
 	Crafty.c("Editor", {
 		_org: null,
+		_selected: false,
 		
 		init: function() {
 			var self = this;
+			this.addComponent("Mouse");
 			
 			this._org = Crafty.e("2D, DOM, origin, Draggable")
-				.attr({x: this._x + this._origin.x + 5, y: this._y + this._origin.y + 5, w: 10, h: 10})
+				.attr({x: this.x + this._origin.x - 5, y: this.y + this._origin.y - 5, w: 10, h: 10})
 				.bind("StopDrag", function(e) {
-					self.origin(this._x - self._x, this._y - self._y);
+					self.origin(this.x - self.x + 5, this.y - self.y + 5);
 				});
-				
+					
 			this.attach(this._org);
 			
-			this.addComponent("Draggable");
+			this.bind("MouseDown", function() {
+				this._selected = true;
+				resetValues(this);
+				
+				if(SELECTED && SELECTED !== this) {
+					SELECTED.disableDrag();
+					SELECTED.removeComponent("Draggable", true);
+					SELECTED.removeComponent("Part", true);
+					SELECTED._selected = false;
+				}
+				
+				SELECTED = this;
+				this.addComponent("Draggable, Part");
+			});
 			
 			this.bind("MouseDown", function(e) {
-				if(e.button !== 2) return;
+				if(e.button !== 2 || !this._selected) return;
 				
 				var lastpos = e.clientX;
-				Crafty.addEvent(this, "mousemove", function rot(e) {
+				
+				function rot(e) {
 					this.rotation -= e.clientX - lastpos;
 					lastpos = e.clientX;
-					
-					Crafty.addEvent(this, "mouseup", function rem() {
-						Crafty.removeEvent(this, "mousemove", rot);
-						Crafty.removeEvent(this, "mouseup", rem);
-					});
+				}
+				
+				Crafty.addEvent(this, "mousemove", rot);
+				
+				Crafty.addEvent(this, "mouseup", function rem() {
+					Crafty.removeEvent(this, "mousemove", rot);
+					Crafty.removeEvent(this, "mouseup", rem);
 				});
 			});
 			
@@ -204,10 +251,11 @@ $(function() {
 			if(!ENT[part]) continue;
 		
 			temp[part] = {
-				x: ENT[part]._x,
-				y: ENT[part]._y,
-				rotation: ENT[part]._rotation,
-				alpha: ENT[part]._alpha,
+				x: ENT[part].x,
+				y: ENT[part].y,
+				rotation: ENT[part].rotation,
+				alpha: ENT[part].alpha,
+				z: ENT[part].z,
 				_origin: ENT[part]._origin
 			};
 		}
@@ -243,7 +291,6 @@ $(function() {
 	$("#export").click(function() {
 		var text = JSON.stringify(FRAMES);
 		modal(text);
-		console.log(text);
 	});
 	
 	generateFrames();
@@ -268,7 +315,6 @@ $(function() {
 		if(f) {
 			putState(f);
 		} else {
-			console.log(FRAMES[CURRENT]);
 			//otherwise save the current state
 			FRAMES[CURRENT] = getState();
 		}
@@ -279,20 +325,55 @@ $(function() {
 		ENT.pauseUpdate();
 		
 		ENT.apply("Test", FRAMES);
-		ENT.run("Test");
 		
 		//start it back up again
 		ENT.bind("AnimationEnd", function() {
-			console.log("START");
 			ENT.startUpdate();
+			ENT.unbind("AnimationEnd");
 		});
+		
+		ENT.run("Test");
 	});
+	
+	$("#import").click(function() {
+		var data = eval("(" + $("#assemble").val() + ")"),
+			parts = "head body tail front back".split(' '),
+			part;
+			
+		ENT.assemble(data);
+		
+		for(part in parts) {
+			part = parts[part];
+			
+			ENT[part]._org.attr({x: ENT[part]._origin.x - 5, y: ENT[part]._origin.y - 5});
+		}
+	});
+	
+	$("#zindex").keyup(function() {
+		var d = $(this).val();
+		
+		if(SELECTED) {
+			SELECTED.z = Crafty.n(d);
+		}
+	});
+	
+	$("#alpha").keyup(function() {
+		var d = $(this).val();
+		
+		if(SELECTED) {
+			SELECTED.alpha = Crafty.n(d);
+		}
+	});
+	
+	function resetValues(obj) {
+		$("#zindex").val(obj.z);
+		$("#alpha").val(obj.alpha);
+	}
 	
 	var nop = function() { return false; };
 	//stop draggable
 	$("#frames").bind("selectstart", nop).bind("contextmenu", nop);
 	
-	ent = Crafty.e("2D, Animation").addAnimation("test", {5: {alpha: 0.5}, 10: {alpha:1.0}});
 });
 </script>
 <style>
@@ -314,7 +395,7 @@ html, body { font-family:Verdana; height:100%; padding:0; margin:0; background:#
 #frames span.selected { border:2px solid #444; margin-top:-1px }
 
 #cr-stage { border:1px solid #ccc; background:#fff; width:500px; height:400px; position:absolute; top:30%; left:30% }
-#toolbar { position:absolute; top:0; left:0; right:101px; padding:5px; background:#fff; border-bottom:1px solid #aaa; height:31px; font-size:14px }
+#toolbar { position:absolute; top:0; left:0; right:101px; padding:5px; background:#fff; border-bottom:1px solid #aaa; height:52px; font-size:14px }
 
 #modal { border:5px solid #444; background:#fff; position:absolute; width:500px; height:400px; border-radius:5px; padding:5px; z-index: 10000 }
 #modal textarea { width:100%; height:100%; border:0; outline:0; resize:none }
@@ -332,6 +413,8 @@ html, body { font-family:Verdana; height:100%; padding:0; margin:0; background:#
 	cursor: pointer;
 }
 
+.Part { border:1px solid #ccc; margin:-1px 0 0 -1px }
+
 div.origin { width:10px; height:10px; border:1px double #000; border-radius:10px; position:absolute; background:#fff; z-index:1000 }
 </style>
 </head>
@@ -347,11 +430,22 @@ div.origin { width:10px; height:10px; border:1px double #000; border-radius:10px
 
 <div id="toolbar">
 <label>Type: <input type="text" id="type" value="Possel" /></label>
-<label>Image: <input type="text" id="image" value="tests/possel.png" /></label>
-<label>Sprite: <input type="text" id="sprite" value="{Possel_head: [5, 3, 52, 57], Possel_front: [5, 68, 60, 87], Possel_back: [5, 162, 61, 73], Possel_tail: [5, 234, 71, 115], Possel_body: [5, 354, 87, 57]}" /></label> <button id="submit">Load</button>
+<label>Image: <input type="text" id="image" value="assets/images/aliens/animation.png" /></label>
+<label>Sprite: <input type="text" id="sprite" value="{
+	Possel_head: [0,0,56,60],
+	Possel_body: [0,61,92,58],
+	Possel_front: [0,123,68,97],
+	Possel_back: [0,220,56,83],
+	Possel_tail: [0,304,69,126]}" /></label> <button id="submit">Load</button>
 
 <button id="export">Export</button>
 <button id="play">Play</button>
+<input type="text" id="assemble" /><button id="import">Import</button>
+
+<br />
+
+<label>Z-Index: <input type="text" size="1" id="zindex" /></label>
+<label>Alpha: <input type="text" size="3" id="alpha" /></label>
 </div>
 
 <div id="modal"><div>x</div><textarea></textarea></div>

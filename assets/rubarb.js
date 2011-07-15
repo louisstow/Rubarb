@@ -7,6 +7,8 @@ var Login, Register, Battle, Training, Map, TrainScreen, Choose, Items, Aliens,
 $(function() {
 	Crafty.init(800, 600);
 	
+	Crafty.sprite("assets/images/aliens/animation.png", SPRITES);
+	
 	Login = Crafty.e("Room").Room("Login", "login");
 	Register = Crafty.e("Room").Room("Register", "register");
 	Choose = Crafty.e("Room").Room("Choose", "choose");

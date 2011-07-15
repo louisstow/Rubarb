@@ -27,10 +27,16 @@ $log = array();
 
 //Player Missed
 if($chance < 1) {
-	$log["mine"] = "{action: 'missed', move: '{$move->moveName}'}";
 	//take away EXP
 	$alien->exp -= $move->expSelf;
-	$alien->update();
+	
+	$a = json_encode($alien);
+	
+	$log[0] = array(
+		"action" => "missed",
+		"move" => $move->moveName,
+		"me" => $alien
+	);
 	
 } else { //Move Landed
 	//effectivity based on the environment of the aliens
@@ -57,9 +63,12 @@ if($chance < 1) {
 	$train->exp -= $move->expOpp;
 	$train->hp -= $damage;
 	
-	$a = json_encode($train);
-	$p = json_encode($alien);
-	$log["mine"] = "{action: 'attack', move: '{$move->moveName}', opp: {$a}, me: {$p}}";
+	$log[0] = array(
+		"action" => "attack",
+		"move" => $move->moveName,
+		"opp" => $train,
+		"me" => $alien
+	);
 
 	//if the alien has lost, player wins training
 	if($train->hp <= 0) {
@@ -87,9 +96,10 @@ if($chance < 1) {
 		$alien->update();
 		$battle->remove();
 		
-		$a = json_encode($alien);
+		$log[0]['win'] = $alien;
 		
-		echo "{mine: {$log['mine']}, win: {$a}}";
+		//echo the current structure
+		echo json_encode($log);
 		exit;
 	}
 }
@@ -99,7 +109,9 @@ $move = BattleTrain::chooseMove($train->species, $train->level, $train->exp);
 
 //no move found, skip
 if(!$move) {
-	echo "{mine: {$log['mine']}, opp: {action: 'skip'}}";
+	$log[1] = array(
+		"action" => "skip"
+	);
 } else {
 	//effectivity based on the environment of the aliens
 	$effective = Moves::environment($me->location, $species->world) * ($alien->attack * 0.2);
@@ -123,6 +135,7 @@ if(!$move) {
 	$alien->hp -= $damage;
 
 	$win = "false";
+	
 	//player lost
 	if($alien->hp <= 0) {
 		$me->update();
@@ -130,10 +143,16 @@ if(!$move) {
 		$win = "true";
 	}
 
-	$a = json_encode($alien);
-	$o = json_encode($train);
-	echo "{mine: {$log['mine']}, opp: {action: 'attack', move: '{$move->moveName}', me: {$a}, opp: {$o}, win: {$win}}}";
+	$log[1] = array(
+		"action" => "attack",
+		"move" => $move->moveName,
+		"me" => $alien,
+		"opp" => $train,
+		"win" => $win
+	);
 }
+
+echo json_encode($log);
 
 $alien->update();
 $train->update();

@@ -52,20 +52,31 @@ $(function() {
 					//move to the container
 					Crafty.stage.inner.removeChild(this[part]._element);
 					this.parent.appendChild(this[part]._element);
-					
-					//if positions defined, apply
-					if(pos && pos[part]) {
-						//loop over props and apply
-						for(prop in pos[part]) {
-							this[part][prop] = pos[part][prop];
-						}
-					}
 				}
-				
-				
+			}
+			
+			if(pos) {
+				this.assemble(pos);
 			}
 			
 			return this;
+		},
+		
+		assemble: function(props) {
+			var parts = "head body tail front back".split(' '),
+				part, prop;
+			
+			for(part in parts) {
+				part = parts[part];
+				
+				//if positions defined, apply
+				if(props[part]) {
+					//loop over props and apply
+					for(prop in props[part]) {
+						this[part][prop] = pos[part][prop];
+					}
+				}
+			}
 		},
 		
 		apply: function(label, anim) {
