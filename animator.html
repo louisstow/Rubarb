@@ -125,22 +125,24 @@ $(function() {
 					
 			this.attach(this._org);
 			
-			this.bind("MouseDown", function() {
+			this.bind("MouseDown", function(e) {
 				this._selected = true;
 				resetValues(this);
 				
-				if(SELECTED && SELECTED !== this) {
-					SELECTED.disableDrag();
-					SELECTED.removeComponent("Draggable", true);
-					SELECTED.removeComponent("Part", true);
-					SELECTED._selected = false;
+				if(SELECTED !== this) {
+					if(SELECTED) {
+						SELECTED.disableDrag();
+						SELECTED.removeComponent("Draggable", true);
+						SELECTED.removeComponent("Part", true);
+						SELECTED._selected = false;
+					}
+					
+					SELECTED = this;
+					this.addComponent("Draggable, Part");
+					return;
 				}
-				
-				SELECTED = this;
-				this.addComponent("Draggable, Part");
-			});
-			
-			this.bind("MouseDown", function(e) {
+		
+				console.log(this._selected);
 				if(e.button !== 2 || !this._selected) return;
 				
 				var lastpos = e.clientX;
