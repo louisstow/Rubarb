@@ -2,19 +2,33 @@
 
 var Login, Register, Battle, Training, Map, TrainScreen, Choose, Items, Aliens, 
 	ME,
-	ALIENS = [];
+	ALIENS = [],
+	MENU;
 
 $(function() {
 	Crafty.init(800, 600);
 	
+	//animation sprites
 	Crafty.sprite("assets/images/aliens/animation.png", SPRITES);
+	
+	//effects sprites
+	Crafty.sprite("assets/images/battle/effects.png", {
+		cloud: [0,0,120,127],
+		fire: [120,0,113,127],
+		water: [233,0,86,127],
+		gas: [319,0,157,127],
+		rock: [476,0,105,127],
+		jungle: [581,0,130,127],
+		lava: [711,0,92,127],
+		ice: [803,0,108,127]
+	});
 	
 	Login = Crafty.e("Room").Room("Login", "login");
 	Register = Crafty.e("Room").Room("Register", "register");
 	Choose = Crafty.e("Room").Room("Choose", "choose");
 	Battle = Crafty.e("Room").Room("Battle", "battle-left, battle-right, battle-center, battle-menu");
 	TrainScreen = Crafty.e("Room").Room("TrainScreen", "train-screen");
-	Training = Crafty.e("Room").Room("Training", "train-left, train-right, train-menu");
+	Training = Crafty.e("Room").Room("Training", "train-left, train-right, train-menu, train-left-pop, train-right-pop");
 	Map = Crafty.e("Room").Room("Map", "map");
 	Aliens = Crafty.e("Room").Room("Aliens", "aliens");
 	Items = Crafty.e("Room").Room("Items", "items");
@@ -95,6 +109,20 @@ function Dialog(msg) {
 		});
 }
 
+function showMenu() {
+	//take out the menu and append it so on top
+	var menu = document.getElementById("menu"),
+		$menu = $(menu).show();
+		
+	menu.parentNode.removeChild(menu);
+	Crafty.stage.elem.appendChild(menu);
+	
+	//when a room exits, hide it
+	Crafty.bind("Exit", function() {
+		$menu.hide();
+	});
+}
+
 /**
 * Container of Rooms
 */
@@ -168,6 +196,7 @@ Crafty.c("Room", {
 		this.frag = pull(this.ids);
 		
 		this.trigger("Exit");
+		Crafty.trigger("Exit");
 		return this;
 	},
 	

@@ -1,5 +1,5 @@
 <?php
-load("Battle, BattleTrain, Alien");
+load("Battle, BattleTrain, BattleTemp, Alien");
 data("level");
 
 if($me->battleID) {
@@ -27,8 +27,10 @@ $id = ORM::lastID();
 $me->battleID = $id;
 $me->update();
 
-
 $p = I("Alien")->get($next);
+
+//create the temporary stats
+I("BattleTemp")->create($id, $next, $p->attack, $p->defense, $p->speed);
 
 //choose a species
 $species = BattleTrain::choose($me->location);
@@ -38,7 +40,8 @@ $alien->battleID = $id;
 $alien->alienID = $p->alienID;
 $alien->alienAlias = $species['speciesName'];
 $alien->species = $species['speciesID'];
-$alien->hp = 100;
+$alien->hp = $p->maxHP;
+$alien->maxHP = $p->maxHP;
 
 if($level == "1") {
 	$alien->attack = $p->attack + rand(-1, 1);
@@ -62,6 +65,6 @@ if($level == "1") {
 
 $alien->update();
 
-$data = array("alien" => $p, "opp" => $alien);
+$data = array("battle" => $battle, "alien" => $p, "opp" => $alien);
 echo json_encode($data);
 ?>

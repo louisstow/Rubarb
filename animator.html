@@ -79,6 +79,9 @@ $(function() {
 			//for every body part
 			for(part in parts) {
 				part = parts[part];
+				
+				if(!this[part]) continue;
+				
 				reel = {};
 				//add the animation
 				for(key in anim) {
@@ -98,6 +101,7 @@ $(function() {
 			//for every body part
 			for(part in parts) {
 				part = parts[part];
+				if(!this[part]) continue;
 				this[part].playAnimation(label);
 			}
 			
@@ -142,7 +146,6 @@ $(function() {
 					return;
 				}
 		
-				console.log(this._selected);
 				if(e.button !== 2 || !this._selected) return;
 				
 				var lastpos = e.clientX;
@@ -178,16 +181,26 @@ $(function() {
 	
 	Crafty.c("EditorParent", {
 		parts: ["head", "body", "tail", "front", "back"],
+		len: 0,
 		count: 0,
 		
 		pauseUpdate: function() {
-			var part, self = this;
+			var part, self = this,
+				c = 1;
+			
+			for(part in this.parts) {
+				if(this[part]) c++;
+			}
+			
+			this.len = c;
 			
 			for(part in this.parts) {
 				part = this.parts[part];
+				if(!this[part]) continue;
+				
 				this[part].pauseUpdate();
 				this[part].bind("AnimationEnd", function() {
-					if(++self.count >= self.parts.length) {
+					if(++self.count >= self.len) {
 						self.trigger("AnimationEnd");
 					}
 				});
@@ -199,6 +212,7 @@ $(function() {
 			
 			for(part in this.parts) {
 				part = this.parts[part];
+				if(!this[part]) continue;
 				this[part].startUpdate();
 			}
 		}
@@ -329,9 +343,9 @@ $(function() {
 		ENT.apply("Test", FRAMES);
 		
 		//start it back up again
-		ENT.bind("AnimationEnd", function() {
-			ENT.startUpdate();
-			ENT.unbind("AnimationEnd");
+		ENT.bind("AnimationEnd", function end() {
+			this.startUpdate();
+			this.unbind("AnimationEnd", end);
 		});
 		
 		ENT.run("Test");
@@ -346,6 +360,7 @@ $(function() {
 		
 		for(part in parts) {
 			part = parts[part];
+			if(!ENT[part]) continue;
 			
 			ENT[part]._org.attr({x: ENT[part]._origin.x - 5, y: ENT[part]._origin.y - 5});
 		}
@@ -431,14 +446,26 @@ div.origin { width:10px; height:10px; border:1px double #000; border-radius:10px
 </div>
 
 <div id="toolbar">
-<label>Type: <input type="text" id="type" value="Possel" /></label>
+<label>Type: <input type="text" id="type" value="" /></label>
 <label>Image: <input type="text" id="image" value="assets/images/aliens/animation.png" /></label>
 <label>Sprite: <input type="text" id="sprite" value="{
 	Possel_head: [0,0,56,60],
 	Possel_body: [0,61,92,58],
 	Possel_front: [0,123,68,97],
 	Possel_back: [0,220,56,83],
-	Possel_tail: [0,304,69,126]}" /></label> <button id="submit">Load</button>
+	Possel_tail: [0,304,69,126],
+	
+	Skarrier_head: [90,0,81,91],
+	Skarrier_body: [90,94,81,92],
+	Skarrier_front: [90,193,45,74],
+	Skarrier_back: [90,267,49,81],
+	Skarrier_tail: [90,352,41,101],
+	
+	Dooth_head: [170,0,43,63],
+	Dooth_body: [170,72,84,83],
+	Dooth_front: [170,155,37,33],
+	Dooth_back: [170,189,35,40]
+}" /></label> <button id="submit">Load</button>
 
 <button id="export">Export</button>
 <button id="play">Play</button>

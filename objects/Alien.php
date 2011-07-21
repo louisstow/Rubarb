@@ -14,7 +14,9 @@ class Alien extends ORM {
 		"exp" => INT,
 		"level" => INT,
 		"hp" => INT,
-		"status" => STRING
+		"maxHP" => INT,
+		"status" => STRING,
+		"alienOrder" => INT
 	);
 	
 	/**
@@ -33,7 +35,7 @@ class Alien extends ORM {
 	
 	public static function heal($user) {
 		ORM::query("UPDATE aliens 
-					SET hp = 100, status = 'carried', exp = level * 10
+					SET hp = maxHP, status = 'carried', exp = maxExp
 					WHERE playerID = ? AND (status = 'carried' OR status = 'fainted')", array($user));
 	}
 }

@@ -3,9 +3,13 @@
 <head>
 	<title>Crafty Critters</title>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Patrick+Hand&v2' rel='stylesheet' type='text/css'>
+	
 	<script type="text/javascript" src="../crafty/Crafty/crafty.js"></script>
 	
 	<script type="text/javascript" src="assets/animations.js"></script>
+	<script type="text/javascript" src="assets/map.js"></script>
+	<script type="text/javascript" src="assets/battle.js"></script>
 	<script type="text/javascript" src="assets/training.js"></script>
 	<script type="text/javascript" src="assets/login.js"></script>
 	<script type="text/javascript" src="assets/aliens.js"></script>
@@ -101,6 +105,9 @@
 	</div>
 </div>
 
+<span id="train-left-pop"></span>
+<span id="train-right-pop"></span>
+
 <!-------- TRAIN ----->
 <div id="train-screen" class="box">
 	<h2>Choose a difficulty</h2>
@@ -171,7 +178,7 @@
 </div>
 
 <div id="cr-stage">
-<div id="menu"><a id="menu-alien">Aliens</a> <a id="menu-item">Items</a> <a id="menu-back">Back</a></div>
+<div id="menu"></div>
 <div id="dialog"></div>
 </div>
 
