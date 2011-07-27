@@ -24,9 +24,9 @@ $alien->attack = $species->attack;
 $alien->defense = $species->defense;
 $alien->speed = $species->speed;
 $alien->exp = 100;
-$alien->level = 1;
-$alien->hp = 12;
-$alien->maxHP = 12;
+$alien->level = 6;
+$alien->hp = 22;
+$alien->maxHP = 22;
 $alien->status = 'carried';
 
 $alien->update();

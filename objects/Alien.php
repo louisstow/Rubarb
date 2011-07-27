@@ -35,7 +35,7 @@ class Alien extends ORM {
 	
 	public static function heal($user) {
 		ORM::query("UPDATE aliens 
-					SET hp = maxHP, status = 'carried', exp = maxExp
+					SET hp = maxHP, status = 'carried'
 					WHERE playerID = ? AND (status = 'carried' OR status = 'fainted')", array($user));
 	}
 }

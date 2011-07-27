@@ -73,6 +73,15 @@ class ORM {
 		return self::$error;
 	}
 	
+	static function fetchAll($q, $const=PDO::FETCH_ASSOC) {
+		$data = array();
+		while($row = $q->fetch($const)) {
+			$data[] = $row;
+		}
+		
+		return $data;
+	}
+	
 	/**
 	* Load the CRUD interface for models
 	*/

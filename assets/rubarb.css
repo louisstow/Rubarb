@@ -17,6 +17,13 @@
 	background: linear-gradient(top, #ffde98 0%,#ffbd31 100%); /* W3C */
 }
 
+.box2 {
+	border:2px solid #62D2BA;
+	background:#fff;
+	font-size: 14px;
+	padding: 5px;
+}	
+
 .flip {
     -moz-transform: scaleX(-1);
     -webkit-transform: scaleX(-1);
@@ -33,6 +40,14 @@ a {
 
 b {
 	font-family: Georgia
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
 }
 
 .button {
@@ -64,8 +79,8 @@ a.active {
 }
 
 .profile {
-	width:50px;
-	height:50px;
+	width:60px;
+	height:60px;
 	border:1px solid #fff;
 	background:#fff;
 	float:left
@@ -82,22 +97,23 @@ a.active {
 	margin-top:5px;
 	height: 40px;
 	font-size: 14px;
+	padding: 5px;
 }
 
 .stats span {
 	float: left;
 	display: block;
-	width: 110px;
+	width: 105px;
 	margin-bottom:5px;
 }
 
 .stats span b {
 	float: right;
-	margin-right: 10px
+	margin-right: 10px;
 }
 
 .health {
-	width: 135px;
+	width: 158px;
 	height: 15px;
 	background:#fff;
 	padding:2px;
@@ -111,6 +127,13 @@ a.active {
 	height:100%;
 }
 
+.health-stats {
+	float: left;
+	width: 158px;
+	margin: 28px 0 0 -50px;
+	font-size: 12px;
+}
+
 .clearer {
 	clear:both;
 }
@@ -119,7 +142,7 @@ a.active {
 
 #battle-menu, #train-menu {
 	width:500px;
-	height:180px;
+	height:200px;
 	margin:auto;
 	bottom:-6px;
 	left: 150px;
@@ -131,7 +154,7 @@ a.active {
 	border:2px solid #fff;
 	background:#62D2BA;
 	padding:5px;
-	height:120px;
+	height:140px;
 	margin-top:3px;
 }
 
@@ -144,11 +167,13 @@ a.active {
 
 #train-list h3 {
 	margin: 0;
+	font-size: 16px;
 }
 
 #train-list .move {
-	padding: 10px;
+	padding: 5px 10px;
 	cursor: pointer;
+	font-size: 14px;
 }
 
 #train-list .move:nth-child(odd) {
@@ -157,7 +182,7 @@ a.active {
 
 #train-left, #battle-left {
 	width:230px;
-	height:100px;
+	height:120px;
 	position:absolute;
 	left: 10px;
 	top: -4px;
@@ -166,7 +191,7 @@ a.active {
 
 #train-right, #battle-right {
 	width:230px;
-	height:100px;
+	height:120px;
 	position:absolute;
 	right: 10px;
 	top: -4px;
@@ -175,29 +200,30 @@ a.active {
 
 #train-screen {
 	position: absolute;
-	left: 200px;
-	top: 300px;
+	left: 300px;
+	top: 200px;
 	padding: 20px
 }
 
-#train-left-pop, #train-right-pop {
-	font-family: 'Patrick Hand', cursive;
-	text-shadow: 0 0 2px #fff;
-	color: red;
+#train-log {
 	position: absolute;
-	text-align: center;
-	width: 300px;
-	top: 150px;
-	display: none;
-	font-size: 24px;
+	left: 265px;
+	top: 50px;
+	width: 255px;
+	height: 66px;
+	padding: 5px;
 }
 
-#train-left-pop {
-	left: 5px;
+#train-log span {
+	display: block;
+	margin-top: 10px;
+	word-wrap: break-word;
 }
 
-#train-right-pop {
-	right: 5px;
+#lobby-friends, #lobby-all {
+	width: 200px;
+	float: left;
+	height: 600px;
 }
 
 #login { 
@@ -317,6 +343,10 @@ a.active {
 #aliens .actions, #items .actions {
 	float: right;
 	margin-top: -30px
+}
+
+#aliens .profile {
+	margin: -5px 0 0 -5px;
 }
 
 #menu {

@@ -28,6 +28,8 @@ if($energy->amount < 1) {
 }
 
 $energy->amount--;
+$energy->update();
+
 $chance = rand(1, 5) * $temp->speed / $train->speed;
 
 $log = array();
@@ -38,36 +40,36 @@ if($chance < 1 && $move->hpOpp) {
 	
 	$log[0] = array(
 		"action" => "missed",
-		"move" => $move->moveName,
-		"moveID" => $move->moveID,
+		"move" => clone $move,
 		"me" => $alien
 	);
 	
 } else { //Move Landed
 	$effective = Battle::environment($species->world, $me->location);
+	$movebias = Battle::environment($move->moveType, $me->location);
 	
-	Battle::applyMove($alien, $temp, $train, $train $move, $effective, $effective);
+	$damage = Battle::applyMove($alien, $temp, $train, $train, $move, $movebias, $effective);
 	
 	$log[0] = array(
 		"action" => "attack",
-		"move" => $move->moveName,
-		"moveID" => $move->moveID,
+		"move" => clone $move,
 		"damage" => $damage,
 		"opp" => clone $train,
-		"me" => clone $alien
+		"me" => clone $alien,
+		"mestats" => clone $temp
 	);
 
 	//if the alien has lost, player wins training
 	if($train->hp <= 0) {
 		$train->hp = 0;
 			
-		Battle::award($alien, $train);
+		$awards = Battle::award($alien, $train);
 		
 		$me->update();
 		$alien->update();
 		$battle->remove();
 		
-		$log[0]['win'] = clone $alien;
+		$log[0]['win'] = $awards;
 		
 		//echo the current structure
 		echo json_encode($log);
@@ -76,7 +78,7 @@ if($chance < 1 && $move->hpOpp) {
 }
 
 //fight back
-$move = BattleTrain::chooseMove($train->species, $train->level, $train->exp);
+$move = BattleTrain::chooseMove($train->species, $train->level);
 
 //no move found, skip
 if(!$move) {
@@ -86,8 +88,9 @@ if(!$move) {
 } else {
 	//bias based on the location of the battle
 	$effective = Battle::environment($battle->environment, $species->world);
+	$movebias = Battle::environment($move->moveType, $species->world);
 	
-	$damage = Battle::applyMove($train, $train, $alien, $temp, $move, $effective, $effective);
+	$damage = Battle::applyMove($train, $train, $alien, $temp, $move, $movebias, $effective);
 	
 	$win = "false";
 	
@@ -103,10 +106,10 @@ if(!$move) {
 
 	$log[1] = array(
 		"action" => "attack",
-		"move" => $move['moveName'],
-		"moveID" => $move['moveID'],
+		"move" => clone $move,
 		"damage" => $damage,
 		"me" => clone $alien,
+		"mestats" => clone $temp,
 		"opp" => clone $train,
 		"win" => $win
 	);

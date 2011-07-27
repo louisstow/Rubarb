@@ -11,7 +11,6 @@ class BattleTrain extends ORM {
 		"attack" => INT,
 		"defense" => INT,
 		"speed" => INT,
-		"exp" => INT,
 		"level" => INT,
 		"hp" => INT,
 		"maxHP" => INT
@@ -59,12 +58,12 @@ class BattleTrain extends ORM {
 		return $data;
 	}
 	
-	public static function chooseMove($species, $level, $exp) {
+	public static function chooseMove($species, $level) {
 		$q = ORM::query("SELECT m.*
 						 FROM ability a INNER JOIN moves m ON a.moveID = m.moveID
-						 WHERE a.speciesID = ? AND a.levelAquired <= ? AND m.expSelf <= ?
+						 WHERE a.speciesID = ? AND a.levelAquired <= ?
 						 ORDER BY RAND()
-						 LIMIT 1", array($species, $level, $exp));
+						 LIMIT 1", array($species, $level));
 		
 		return $q->fetch(PDO::FETCH_OBJ);
 	}

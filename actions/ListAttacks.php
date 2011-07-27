@@ -1,7 +1,7 @@
 <?php
-load("Ability, Moves");
+load("Ability, Moves, Energy");
 data("alien");
 
-$data = Ability::getAttacks($alien);
+$data = Energy::getAttacks($alien);
 echo json_encode($data);
 ?>

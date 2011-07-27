@@ -1,6 +1,6 @@
 //(function($, Crafty) {
 
-var Login, Register, Battle, Training, Map, TrainScreen, Choose, Items, Aliens, 
+var Login, Register, Battle, Training, Map, TrainScreen, Choose, Items, Aliens, Lobby,
 	ME,
 	ALIENS = [],
 	MENU;
@@ -23,15 +23,17 @@ $(function() {
 		ice: [803,0,108,127]
 	});
 	
+	//init all the rooms
 	Login = Crafty.e("Room").Room("Login", "login");
 	Register = Crafty.e("Room").Room("Register", "register");
 	Choose = Crafty.e("Room").Room("Choose", "choose");
 	Battle = Crafty.e("Room").Room("Battle", "battle-left, battle-right, battle-center, battle-menu");
 	TrainScreen = Crafty.e("Room").Room("TrainScreen", "train-screen");
-	Training = Crafty.e("Room").Room("Training", "train-left, train-right, train-menu, train-left-pop, train-right-pop");
+	Training = Crafty.e("Room").Room("Training", "train-left, train-right, train-menu, train-log");
 	Map = Crafty.e("Room").Room("Map", "map");
 	Aliens = Crafty.e("Room").Room("Aliens", "aliens");
 	Items = Crafty.e("Room").Room("Items", "items");
+	Lobby = Crafty.e("Room").Room("Lobby", "lobby");
 	
 	//check if logged in
 	if(!ME) {
@@ -93,7 +95,11 @@ function pull(list) {
 		elem = document.getElementById(ids[i]);
 		
 		//remove from the tree
-		elem.parentNode.removeChild(elem);
+		if(elem) {
+			elem.parentNode.removeChild(elem);
+		} else {
+			console.log(elem, ids[i], i);
+		}
 		
 		frag.appendChild(elem);
 	}

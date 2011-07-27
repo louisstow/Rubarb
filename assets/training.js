@@ -10,8 +10,8 @@ function initTraining(){
 	});
 
 	this.bind("Run", function(data) {
-		update("left", data.alien);
-		update("right", data.opp);
+		update("train", "left", data.alien);
+		update("train", "right", data.opp);
 		
 		var alienInfo = IDtoAlien[data.alien.species],
 			oppInfo = IDtoAlien[data.opp.species],
@@ -32,14 +32,15 @@ function initTraining(){
 			
 			for(;i < l; ++i) {
 				move = moves[i];
-				html += "<div class='move' data-id='"+move.moveID+"'><h3>"+move.moveName+"</h3>Exp: <b>"+move.expSelf+"</b></div>";
+				html += "<div class='move' data-id='"+move.moveID+"'><h3>"+move.moveName+"</h3>Left: <b>"+move.amount+"</b> / <b>"+move.maxAmount+"</b> ";
+				html += "Type: <b>"+move.moveType+"</b></div>";
 			}
 			
 			$list.html(html);
 			$list.find(".move").click(function() {
-				if(LOCK) {
-					return;
-				}
+				if(LOCK) return;
+				var indicator = $(this).find("b:first");
+				indicator.html(Crafty.n(indicator.text()) - 1);
 				
 				var id = $(this).attr("data-id");
 				LOCK = true;
@@ -48,108 +49,20 @@ function initTraining(){
 					console.log(result);
 					var anim;
 					
-					//start with the first turn
-					if(result[0].action === "attack") {
-						//play the animation
-						anim = getAnimation(result[0].moveID);
-						pop("train-left", result[0].move+"! -"+result[0].damage);
-						
-						alien.bind("AnimationEnd", function upd() {
-							//update the stats
-							update("left", result[0].me);
-							update("right", result[0].opp);
-							
-							if(result[0].damage != 0) {
-								effect(alienInfo.world, opp);
-								effect("cloud", opp);
-								opp.run("recoil");
-							}
-							
-							//wait 2 seconds before retaliation
-							setTimeout(function() {
-								//then the opponents turn
-								if(result[1].action === "attack") {
-									//play an animation
-									anim = getAnimation(result[1].moveID);
-									pop("train-right", result[1].move+"! -"+result[1].damage);
-									
-									//wait for the animation to end before updating
-									opp.bind("AnimationEnd", function upd2() {
-										//update the stats
-										update("left", result[1].me);
-										update("right", result[1].opp);
-										
-										if(result[1].damage != 0) {
-											effect(oppInfo.world, {x: alien.x - 100, y: alien.y});
-											effect("cloud", {x: alien.x - 100, y: alien.y});
-											alien.run("recoil");
-										}
-										LOCK = false;
-										this.unbind("AnimationEnd", upd2);
-									});
-									
-									opp.run(anim);
-								}
-							}, 2000);
-							
-							this.unbind("AnimationEnd", upd);
-						});
-						
-						alien.run(anim);
-						
-					} else if(result[0].action === "missed") {
-						update("left", result[0].me);
-						pop("train-left", "Missed!");
-						
-						//then the opponents turn
-						if(result[1].action === "attack") {
-							//play an animation
-							anim = getAnimation(result[1].moveID);
-							pop("train-right", result[1].move);
-							
-							//wait for the animation to end before updating
-							opp.bind("AnimationEnd", function upd2() {
-								//update the stats
-								update("left", result[1].me);
-								update("right", result[1].opp);
-								
-								this.unbind("AnimationEnd", upd2);
+					runMove("train", result[0], alien, opp, result[0].me, function() {
+						//wait between 1 - 2s for running the next move
+						setTimeout(function() {
+							runMove("train", result[1], opp, alien, result[1].opp, function() {
 								LOCK = false;
 							});
-							
-							opp.run(anim);
-						}
-					}
-					
-					
+						}, Crafty.randRange(1000, 2000));
+					});
 				});
 			});
 		});
 		
 		
 	});
-	
-	function update(side, data) {
-		$side = $("#train-"+side);
-		$side.find("h2").text(data.alienAlias);
-		$side.find("b.speed").text(data.speed);
-		$side.find("b.attack").text(data.attack);
-		$side.find("b.defense").text(data.defense);
-		$side.find("b.exp").text(data.exp);
-		
-		var hp = Math.ceil(data.hp / data.maxHP * 100),
-			color;
-			
-		if(hp > 50) {
-			color = "#54e432";
-		} else if(hp > 20) {
-			color = "#e4bc32";
-		} else {
-			color = "#e43232";
-		}
-		
-		$side.find(".health div").css({width: hp + "%", background: color});
-	}
 }
 
 

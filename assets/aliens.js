@@ -54,8 +54,9 @@ function initAliens() {
 	});
 }
 
-function getHealthBar(level) {
-	var color, html;
+function getHealthBar(hp, max) {
+	var color, html,
+		level = ~~(hp / max * 100);
 	
 	if(level > 50) {
 		color = "#54e432";
@@ -85,7 +86,7 @@ function listAliens(actions, callback) {
 		for(;i < l; ++i) {
 			alien = data[i];
 			html += "<div class='alien box' data-id='"+alien.alienID+"'><div class='profile s"+alien.species+"'></div><h2>"+alien.alienAlias+"</h2>";
-			html += getHealthBar(alien.hp);
+			html += getHealthBar(alien.hp, alien.maxHP);
 			html += "<span>Speed: <b>" + alien.speed + "</b></span><span>Attack: <b>" + alien.attack + "</b></span><span>Defense: <b>" + alien.defense;
 			html += "</b></span><span>EXP: <b>" + alien.exp + "</b></span>";
 			html += "<div class='actions'>"+actions+"</div></div>";

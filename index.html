@@ -9,6 +9,7 @@
 	
 	<script type="text/javascript" src="assets/animations.js"></script>
 	<script type="text/javascript" src="assets/map.js"></script>
+	<script type="text/javascript" src="assets/lobby.js"></script>
 	<script type="text/javascript" src="assets/battle.js"></script>
 	<script type="text/javascript" src="assets/training.js"></script>
 	<script type="text/javascript" src="assets/login.js"></script>
@@ -80,6 +81,13 @@
 
 <div id="map"></div>
 
+<!--- LOBBY -->
+<div id="lobby">
+<div id="lobby-friends" class="box2"><h2>Friends</h2><div></div></div>
+<div id="lobby-all" class="box2"><h2>Players Online</h2><div></div></div>
+</div>
+
+
 <!---- BATTLE ------->
 <div id="battle-left">
 
@@ -105,9 +113,6 @@
 	</div>
 </div>
 
-<span id="train-left-pop"></span>
-<span id="train-right-pop"></span>
-
 <!-------- TRAIN ----->
 <div id="train-screen" class="box">
 	<h2>Choose a difficulty</h2>
@@ -117,10 +122,15 @@
 </div>
 
 
+<div id="train-log" class="box2">
+
+</div>
+
 <div id="train-left" class="box">
 <div class="profile"></div>
 <h2></h2>
 
+<div class="health-stats"><span class="left"></span><span class="right"></span></div>
 <div class="health"><div></div></div>
 
 <div class="clearer"></div>
@@ -128,7 +138,7 @@
 	<span>Speed: <b class="speed"></b></span>
 	<span>Attack: <b class="attack"></b></span>
 	<span>Defense: <b class="defense"></b></span>
-	<span>EXP: <b class="exp"></b></span>
+	<span>Level: <b class="lvl"></b></span>
 </div>
 </div>
 
@@ -136,16 +146,15 @@
 <div class="profile"></div>
 <h2></h2>
 
-<div class="health">
-	<div></div>
-</div>
+<div class="health-stats"><span class="left"></span><span class="right"></span></div>
+<div class="health"><div></div></div>
 
 <div class="clearer"></div>
 <div class="stats">
 	<span>Speed: <b class="speed"></b></span>
 	<span>Attack: <b class="attack"></b></span>
 	<span>Defense: <b class="defense"></b></span>
-	<span>EXP: <b class="exp"></b></span>
+	<span>Level: <b class="lvl"></b></span>
 </div>
 </div>
 
