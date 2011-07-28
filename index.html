@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Crafty Critters</title>
+	<title>Isotopia - Play Online Multiplayer HTML5 Game</title>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Patrick+Hand&v2' rel='stylesheet' type='text/css'>
 	
 	<script type="text/javascript" src="../crafty/Crafty/crafty.js"></script>
 	
+	<script type="text/javascript" src="assets/rubarb.js"></script>
 	<script type="text/javascript" src="assets/animations.js"></script>
 	<script type="text/javascript" src="assets/map.js"></script>
 	<script type="text/javascript" src="assets/lobby.js"></script>
+	<script type="text/javascript" src="assets/battleutil.js"></script>
 	<script type="text/javascript" src="assets/battle.js"></script>
+	<script type="text/javascript" src="assets/battles.js"></script>
 	<script type="text/javascript" src="assets/training.js"></script>
 	<script type="text/javascript" src="assets/login.js"></script>
 	<script type="text/javascript" src="assets/aliens.js"></script>
 	<script type="text/javascript" src="assets/items.js"></script>
 	
-	<script type="text/javascript" src="assets/rubarb.js"></script>
+	
 	<link type="text/css" href="assets/rubarb.css" rel="stylesheet" />
 	<link href='http://fonts.googleapis.com/css?family=Neucha&v2' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=PT+Sans&v2' rel='stylesheet' type='text/css'>
@@ -26,7 +29,7 @@
 
 <!---- LOGIN --->
 <div id="login" class="box">
-<h2>Login to Crafty Critters</h2>
+<h2>Login to Isotopia</h2>
 <label>Username: <input type="text" id="login-user" /></label>
 <label>Password: <input type="password" id="login-pass" /></label>
 <div class="clearer"></div>
@@ -35,7 +38,7 @@
 
 <!---- REGISTER --->
 <div id="register" class="box">
-<h2>Register to Crafty Critters</h2>
+<h2>Register to Isotopia</h2>
 <label>Username: <input type="text" id="reg-user" /></label>
 <label>Password: <input type="password" id="reg-pass" /></label>
 <label>Email: <input type="text" id="reg-email" /></label>
@@ -67,15 +70,18 @@
 
 <!--- ALIENS --->
 
-<div id="aliens">
+<div id="aliens" class="container">
 	
 </div>
 
 <!---- ITEMS --->
 
-<div id="items">
+<div id="items" class="container">
 
 </div>
+
+<!---- BATTLES --->
+<div id="battles" class="container"></div>
 
 <!---- MAP --->
 
@@ -85,31 +91,59 @@
 <div id="lobby">
 <div id="lobby-friends" class="box2"><h2>Friends</h2><div></div></div>
 <div id="lobby-all" class="box2"><h2>Players Online</h2><div></div></div>
+<div id="lobby-requests" class="box"><h2>Battle Requests</h2><div class="box2"></div></div>
 </div>
 
 
 <!---- BATTLE ------->
-<div id="battle-left">
+<div id="battle-center"></div>
+
+
+<div id="battle-log" class="box2">
 
 </div>
 
-<div id="battle-center">
+<div id="battle-left" class="box">
+<div class="profile"></div>
+<h2></h2>
 
+<div class="health-stats"><span class="left"></span><span class="right"></span></div>
+<div class="health"><div></div></div>
+
+<div class="clearer"></div>
+<div class="stats">
+	<span>Speed: <b class="speed"></b></span>
+	<span>Attack: <b class="attack"></b></span>
+	<span>Defense: <b class="defense"></b></span>
+	<span>Level: <b class="lvl"></b></span>
+</div>
 </div>
 
-<div id="battle-right">
+<div id="battle-right" class="box">
+<div class="profile"></div>
+<h2></h2>
 
+<div class="health-stats"><span class="left"></span><span class="right"></span></div>
+<div class="health"><div></div></div>
+
+<div class="clearer"></div>
+<div class="stats">
+	<span>Speed: <b class="speed"></b></span>
+	<span>Attack: <b class="attack"></b></span>
+	<span>Defense: <b class="defense"></b></span>
+	<span>Level: <b class="lvl"></b></span>
+</div>
 </div>
 
 <div id="battle-menu" class="box">
 	<h2>Battle Menu</h2>
-	<a class="tab">Attack</a>
+	<a class="tab active">Attack</a>
 	<a class="tab">Items</a>
-	<a class="tab">Aliens</a>
-	<a class="button">Forfeit</a>
+	<a class="tab">Topians</a>
+	<a class="button forfeit">Forfeit</a>
 	
 	<div id="battle-list" class="list">
-	
+		<div class="inner"></div>
 	</div>
 </div>
 

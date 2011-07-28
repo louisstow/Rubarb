@@ -1,8 +1,8 @@
-//(function($, Crafty) {
-
-var Login, Register, Battle, Training, Map, TrainScreen, Choose, Items, Aliens, Lobby,
+var Login, Register, Battle, Training, Map, TrainScreen, Choose, Items, Aliens, Lobby, Battles,
 	ME,
+	LOCK,
 	ALIENS = [],
+	TOWNS,
 	MENU;
 
 $(function() {
@@ -27,13 +27,14 @@ $(function() {
 	Login = Crafty.e("Room").Room("Login", "login");
 	Register = Crafty.e("Room").Room("Register", "register");
 	Choose = Crafty.e("Room").Room("Choose", "choose");
-	Battle = Crafty.e("Room").Room("Battle", "battle-left, battle-right, battle-center, battle-menu");
+	Battle = Crafty.e("Room").Room("Battle", "battle-left, battle-right, battle-center, battle-menu, battle-log");
 	TrainScreen = Crafty.e("Room").Room("TrainScreen", "train-screen");
 	Training = Crafty.e("Room").Room("Training", "train-left, train-right, train-menu, train-log");
 	Map = Crafty.e("Room").Room("Map", "map");
 	Aliens = Crafty.e("Room").Room("Aliens", "aliens");
 	Items = Crafty.e("Room").Room("Items", "items");
 	Lobby = Crafty.e("Room").Room("Lobby", "lobby");
+	Battles = Crafty.e("Room").Room("Battles", "battles");
 	
 	//check if logged in
 	if(!ME) {
@@ -47,6 +48,13 @@ $(function() {
 			}
 		}, false);
 	}
+	
+	//run a slower clock
+	Crafty.bind("EnterFrame", function(e) {
+		if(e.frame % 500 === 0) {
+			Crafty.trigger("Clock");
+		}
+	});
 });
 
 /**
@@ -124,7 +132,7 @@ function showMenu() {
 	Crafty.stage.elem.appendChild(menu);
 	
 	//when a room exits, hide it
-	Crafty.bind("Exit", function() {
+	Crafty.bind("RoomChange", function() {
 		$menu.hide();
 	});
 }
@@ -202,7 +210,7 @@ Crafty.c("Room", {
 		this.frag = pull(this.ids);
 		
 		this.trigger("Exit");
-		Crafty.trigger("Exit");
+		Crafty.trigger("RoomChange");
 		return this;
 	},
 	
@@ -210,7 +218,3 @@ Crafty.c("Room", {
 		
 	}
 });
-
-
-
-//})(jQuery, Crafty);

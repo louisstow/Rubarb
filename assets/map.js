@@ -28,3 +28,13 @@ function initMap() {
 		});
 	});
 }
+
+TOWNS = {
+	fire: "Ember Town",
+	lava: "Magma City",
+	gas: "Nitroville",
+	jungle: "Camp Foliage",
+	ice: "Crystal City",
+	rock: "Stone Mountain",
+	water: "Aqua Town"
+}

@@ -1,40 +1,46 @@
 <?php
-load("BattleRequest, Battle, BattleTeam, BattlePVP, BattleSnapshot");
-data("type, area, friend, teama, teamb");
+load("Alien, BattleRequest, BattleTemp, Battle, BattleTeam, BattlePVP, BattleSnapshot");
+data("type, friend");
 
+if($me->battleID && $type == "pvp") {
+	error("Already in battle");
+}
 
-$battle = I("Battle")->create(D, $type, USER, USER, NOW(), 'NULL', $area);
+if($friend == USER) {
+	error("Stop playing with yourself");
+}
 
-//Team Battle
-if($type == "team") {
-	$teama = explode(',', $teama);
-	$teamb = explode(',', $teamb);
-	
-	//send a request for each member except self
-	foreach($teama as $player) {
-		if($player != USER) {
-			I("BattleRequest")->create($battle->battleID, $player, NOW());
-		}
-		I("BattleTeam")->create($battle->battleID, $player, 'A', 0, NOW());
-	}
-	
-	foreach($teamb as $player) {
-		if($player != USER) {
-			I("BattleRequest")->create($battle->battleID, $player, NOW());
-		}
-		I("BattleTeam")->create($battle->battleID, $player, 'B', 0, NOW());
-	}
-	
-	//update the amount of players needing to confirm
-	$battle->needed = count($teama) + count($teamb);
-	$battle->update();
-//Player vs Player
-} else if($type == "pvp") {
-	I("BattlePVP")->create($battle->battleID, USER, 0, NOW(), $friend, 0, NOW());
+$alien = I("Alien")->get(Alien::getNext(USER));
+$opp = I("Alien")->get(Alien::getNext($friend));
+
+if(!$alien) {
+	error("You have no fit Topians");
+}
+
+if(!$opp) {
+	error("Opponent unable to play");
+}
+
+$battle = I("Battle")->create(D, $type, USER, USER, NOW(), 'NULL', $me->location);
+I("BattlePVP")->create($battle->battleID, USER, $alien->alienID, NOW(), $friend, $opp->alienID, NOW());
+
+if($type == "pvp") {
+	//store the temp stats
+	I("BattleTemp")->create($battle->battleID, $alien->alienID, $alien->attack, $alien->defense, $alien->speed);
+	I("BattleTemp")->create($battle->battleID, $opp->alienID, $opp->attack, $opp->defense, $opp->speed);
 } else if($type == "test") {
-	I("BattlePVP")->create($battle->battleID, USER, 0, NOW(), $friend, 0, NOW());
+	//create a snapshot
 	BattleSnapshot::setup($battle->battleID, USER, $friend);
 }
 
-ok();
+if($type == "pvp") {
+	$me->battleID = $battle->battleID;
+	$me->update();
+}
+
+echo json_encode(array(
+	"battle" => $battle,
+	"p1" => $alien,
+	"p2" => $opp
+));
 ?>

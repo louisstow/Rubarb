@@ -1,7 +1,15 @@
+body {
+	background: #eefcff;
+}
+
 #cr-stage {
-	border:1px solid black;
+	
 	margin:auto;
-	font-family: Arial
+	font-family: Arial;
+	
+	-moz-box-shadow: 0 0 15px #aaa;
+	-webkit-box-shadow: 0 0 15px #aaa;
+	box-shadow: 0 0 15px #aaa;
 }
 
 .box {
@@ -23,6 +31,26 @@
 	font-size: 14px;
 	padding: 5px;
 }	
+
+.list {
+	cursor: pointer;
+	font-size: 14px;
+	padding: 5px;
+}
+
+.list:nth-child(odd) {
+	background: #eee;
+}
+
+.list h3 {
+	margin: 0;
+	font-size: 16px;
+}
+
+.list .actions {
+	float: right;
+	margin-top: -15px
+}
 
 .flip {
     -moz-transform: scaleX(-1);
@@ -150,34 +178,30 @@ a.active {
 	padding:5px;
 }
 
-#train-list {
+#train-list, #battle-list {
 	border:2px solid #fff;
 	background:#62D2BA;
 	padding:5px;
 	height:140px;
-	margin-top:3px;
+	margin-top:4px;
 }
 
-#train-list div.inner {
+#train-list div.inner, #battle-list div.inner {
 	background:#fff;
 	width:100%;
 	height:100%;
 	overflow: auto;
 }
 
-#train-list h3 {
+#train-list h3, #battle-list h3 {
 	margin: 0;
 	font-size: 16px;
 }
 
-#train-list .move {
+#train-list .move, #battle-list .move {
 	padding: 5px 10px;
 	cursor: pointer;
 	font-size: 14px;
-}
-
-#train-list .move:nth-child(odd) {
-	background: #eee;
 }
 
 #train-left, #battle-left {
@@ -198,14 +222,14 @@ a.active {
 	padding:5px;
 }
 
-#train-screen {
+#train-screen, #battle-screen {
 	position: absolute;
 	left: 300px;
 	top: 200px;
 	padding: 20px
 }
 
-#train-log {
+#train-log, #battle-log {
 	position: absolute;
 	left: 265px;
 	top: 50px;
@@ -214,7 +238,7 @@ a.active {
 	padding: 5px;
 }
 
-#train-log span {
+#train-log span, #battle-log span {
 	display: block;
 	margin-top: 10px;
 	word-wrap: break-word;
@@ -223,7 +247,20 @@ a.active {
 #lobby-friends, #lobby-all {
 	width: 200px;
 	float: left;
-	height: 600px;
+	height: 586px;
+}
+
+#lobby-all {
+	margin-left: -1px;
+}
+
+#lobby-requests {
+	display: none;
+	width: 330px;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	padding: 5px;
 }
 
 #login { 
@@ -322,25 +359,34 @@ a.active {
 	left: 500px;
 }
 
-#aliens, #items {
+.container {
 	height:100%;
 	padding: 20px;
+	overflow: auto;
 }
 
-#aliens .alien, #items .item {
+.list2 {
 	margin-bottom:10px;
 	padding: 10px
 }
 
-#aliens .alien h2, #items .item h2 {
+.inactive {
+	opacity: 0.2;
+	-webkit-opacity: 0.2;
+	-mz-opacity: 0.2;
+	-o-opacity: 0.2;
+	-ms-opacity: 0.2;
+}
+
+#aliens .alien h2, #items .item h2, {
 	margin-left: 60px;
 }
 
-#aliens .alien span, #items .item span {
-	margin: 0 10px 0 10px;
+.list2 span {
+	margin: 0 20px 0 0;
 }
 
-#aliens .actions, #items .actions {
+.list2 .actions {
 	float: right;
 	margin-top: -30px
 }

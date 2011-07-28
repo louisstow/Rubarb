@@ -1,29 +1,21 @@
 <?php
-load("BattleRequest, Battle, BattlePVP, BattleSnapshot, BattleTeam");
+load("Alien, BattleRequest, Battle, BattlePVP, BattleSnapshot, BattleTeam");
 data("battle, response");
 
 $battle = I("Battle")->get($battle);
+if(!$battle) {
+	error("Battle not found");
+}
 
 if($response == "A") {
 	//make sure they are involved in the battle
-	if($battle->type == 'team') {
-		$q = I("BattleTeam")->getMany(array("battleID" => $battle->battleID, "playerID" => USER));
-		if($q->count() < 1) {
-			error("Not part of this battle");
-		}
-	} else {
-		$q = I("BattlePVP")->get($battle->battleID);
-		
-		if($q->playerID != USER && $q->opponentID != USER) {
-			error("Not part of this battle");
-		}
+	$q = I("BattlePVP")->get($battle->battleID);
+	
+	if($q->playerID != USER && $q->opponentID != USER) {
+		error("Not part of this battle");
 	}
-
-	//update the player count
-	$battle->accepted++;
-	if($battle->accepted == $battle->needed) {
-		$battle->status = 'accepted';
-	}
+	
+	$battle->status = 'accepted';
 	$battle->update();
 	
 	//update the players status
@@ -32,7 +24,11 @@ if($response == "A") {
 		$me->update();
 	}
 
-	ok();
+	echo json_encode(array(
+		"battle" => $battle,
+		"p1" => I("Alien")->get($q->playerAlien),
+		"p2" => I("Alien")->get($q->opponentAlien)
+	));
 } else {
 	$battle->remove();
 	

@@ -14,5 +14,12 @@ class Player extends ORM {
 		"status" => STRING,
 		"location" => STRING
 	);
+	
+	public static function online($area) {
+		$q = ORM::query("SELECT playerID, screenName, wins, loses FROM players WHERE status = 'online' AND playerID <> ? AND location = ?", 
+			array(USER, $area));
+			
+		return ORM::fetchAll($q);
+	}
 }
 ?>

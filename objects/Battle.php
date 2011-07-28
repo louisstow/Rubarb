@@ -120,5 +120,18 @@ class Battle extends ORM {
 		
 		return $achievements;
 	}
+	
+	/**
+	* Return a list of all battles the player is invited to but is yet to
+	* accept
+	*/
+	public static function getRequests($user) {
+		$q = ORM::query("SELECT p.screenName, b.battleID, t.type
+						 FROM battle_pvp b INNER JOIN battle t USING(battleID) INNER JOIN players p USING(playerID) 
+						 WHERE opponentID = ? AND t.status = 'waiting'",
+			array($user));
+			
+		return ORM::fetchAll($q);
+	}
 }
 ?>

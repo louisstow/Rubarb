@@ -27,16 +27,7 @@ function initTraining(){
 		alien.position(200, 200);
 		opp.position(600, 200);
 		
-		api("ListAttacks", {alien: data.alien.alienID}, function(moves) {
-			var i = 0, l = moves.length, move, html = "";
-			
-			for(;i < l; ++i) {
-				move = moves[i];
-				html += "<div class='move' data-id='"+move.moveID+"'><h3>"+move.moveName+"</h3>Left: <b>"+move.amount+"</b> / <b>"+move.maxAmount+"</b> ";
-				html += "Type: <b>"+move.moveType+"</b></div>";
-			}
-			
-			$list.html(html);
+		listAttacks($list, data.alien.alienID, function() {
 			$list.find(".move").click(function() {
 				if(LOCK) return;
 				var indicator = $(this).find("b:first");
@@ -49,10 +40,10 @@ function initTraining(){
 					console.log(result);
 					var anim;
 					
-					runMove("train", result[0], alien, opp, result[0].me, function() {
+					runMove("train", result[0], alien, opp, result[0].p1, function() {
 						//wait between 1 - 2s for running the next move
 						setTimeout(function() {
-							runMove("train", result[1], opp, alien, result[1].opp, function() {
+							runMove("train", result[1], opp, alien, result[1].p2, function() {
 								LOCK = false;
 							});
 						}, Crafty.randRange(1000, 2000));

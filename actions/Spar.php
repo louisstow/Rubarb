@@ -41,7 +41,7 @@ if($chance < 1 && $move->hpOpp) {
 	$log[0] = array(
 		"action" => "missed",
 		"move" => clone $move,
-		"me" => $alien
+		"p1" => $alien
 	);
 	
 } else { //Move Landed
@@ -54,9 +54,9 @@ if($chance < 1 && $move->hpOpp) {
 		"action" => "attack",
 		"move" => clone $move,
 		"damage" => $damage,
-		"opp" => clone $train,
-		"me" => clone $alien,
-		"mestats" => clone $temp
+		"p2" => clone $train,
+		"p1" => clone $alien,
+		"p1stats" => clone $temp
 	);
 
 	//if the alien has lost, player wins training
@@ -108,9 +108,9 @@ if(!$move) {
 		"action" => "attack",
 		"move" => clone $move,
 		"damage" => $damage,
-		"me" => clone $alien,
-		"mestats" => clone $temp,
-		"opp" => clone $train,
+		"p1" => clone $alien,
+		"p2stats" => clone $temp,
+		"p2" => clone $train,
 		"win" => $win
 	);
 }
@@ -118,5 +118,6 @@ if(!$move) {
 echo json_encode($log);
 
 $alien->update();
+$temp->update();
 $train->update();
 ?>

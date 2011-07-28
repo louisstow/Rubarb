@@ -8,6 +8,10 @@ if(isset($battle)) {
 	$battle = I("Battle")->get($me->battleID);
 }
 
+if(!$battle) {
+	error("Battle not found");
+}
+
 $pvp = I("BattlePVP")->get($battle->battleID);
 
 //show the latest action first
@@ -26,7 +30,7 @@ if($battle->turn != USER && $battle->type == "pvp") {
 		$battle->update();
 		
 		$opp = $pvp->{$opp . "ID"};
-		I("BattleLog")->create($battle->battleID, NOW(), "{a: 'inactive', u: $opp}");
+		I("BattleLog")->create($battle->battleID, NOW(), "{a: 'inactive', turn: $opp}");
 	}
 }
 ?>

@@ -85,7 +85,7 @@ function listAliens(actions, callback) {
 		
 		for(;i < l; ++i) {
 			alien = data[i];
-			html += "<div class='alien box' data-id='"+alien.alienID+"'><div class='profile s"+alien.species+"'></div><h2>"+alien.alienAlias+"</h2>";
+			html += "<div class='alien box list2' data-id='"+alien.alienID+"'><div class='profile s"+alien.species+"'></div><h2>"+alien.alienAlias+"</h2>";
 			html += getHealthBar(alien.hp, alien.maxHP);
 			html += "<span>Speed: <b>" + alien.speed + "</b></span><span>Attack: <b>" + alien.attack + "</b></span><span>Defense: <b>" + alien.defense;
 			html += "</b></span><span>EXP: <b>" + alien.exp + "</b></span>";
@@ -229,6 +229,14 @@ Crafty.c("Alien", {
 		this.parent.setAttribute("class", "flip");
 		var w = $(this.parent).width();
 		this.position(this.x + w, this.y);
+	},
+	
+	inactive: function() {
+		$(this.parent).addClass("inactive");
+	},
+	
+	active: function() {
+		$(this.parent).removeClass("inactive");
 	}
 });
 
