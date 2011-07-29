@@ -45,6 +45,7 @@ $(function() {
 			} else {
 				//else set the data to ME
 				ME = data;
+				inBattle();
 			}
 		}, false);
 	}

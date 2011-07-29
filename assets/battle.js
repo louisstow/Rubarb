@@ -53,7 +53,7 @@ function initBattle(){
 			//if we haven't started, keep polling
 			if(!STARTED) {
 				api("HasStarted", param, function(resp) {
-					if(resp.battle.status === "accepted") {
+					if(resp.battle && resp.battle.status === "accepted") {
 						STARTED = true;
 						p2.active();
 					}

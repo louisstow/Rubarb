@@ -81,12 +81,12 @@ function runMove(type, data, player, opponent, turn, callback) {
 		msg = narrate(data.damage, data.move.moveName, p1, p2)
 	}
 	
-	log(msg);
+	log(msg, type);
 	
 	player.bind("AnimationEnd", function upd() {
 		//update the stats
-		update(type, "left", data.p1, data.p1stats);
-		update(type, "right", data.p2, data.p2stats);
+		if(p1) update(type, "left", p1, p1stats);
+		if(p2) update(type, "right", p2, p2stats);
 		
 		//if the move resulted in damage, play animations and effects
 		if(data.damage != 0) {
@@ -122,8 +122,9 @@ function narrate(damage, move, player, opp) {
 	return opp.alienAlias + narr + move + ext;
 }
 
-function log(text) {
-	var $log = $("#train-log");
+function log(text, type) {
+	type = type || "train";
+	var $log = $("#"+type+"-log");
 	
 	//remove the first span
 	if($log.find("span").size() == 2) {

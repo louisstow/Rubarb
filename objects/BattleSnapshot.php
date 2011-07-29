@@ -32,7 +32,7 @@ class BattleSnapshot extends ORM {
 							INNER JOIN battle x USING(battleID)
 							INNER JOIN players p ON b.opponentID = p.playerID
 							INNER JOIN players p2 ON b.playerID = p2.playerID
-						 WHERE x.status = 'accepted' AND (b.playerID = :user OR b.opponentID = :user)", array("user" => $user));
+						 WHERE (x.status = 'accepted' OR (x.ownerID = :user AND x.status = 'waiting')) AND (b.playerID = :user OR b.opponentID = :user)", array("user" => $user));
 			
 		$data = array();
 		while($row = $q->fetch(PDO::FETCH_ASSOC)) {

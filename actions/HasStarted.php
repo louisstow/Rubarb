@@ -17,13 +17,9 @@ if($battle->type == "pvp") {
 	$p2 = I("BattleSnapshot")->get($battle->battleID, $pvp->opponentAlien);
 }
 
-if($battle->status == "accepted") {
-	echo json_encode(array(
-		"battle" => $battle,
-		"p1" => $p1,
-		"p2" => $p2
-	));
-} else {
-	echo "{'status': false}";
-}
+echo json_encode(array(
+	"battle" => $battle,
+	"p1" => $p1,
+	"p2" => $p2
+));
 ?>

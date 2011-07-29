@@ -8,6 +8,7 @@ function initLogin() {
 	
 		api("Login", data, function(data) {
 			ME = data;
+			inBattle();
 		});
 	});
 	
@@ -46,3 +47,11 @@ function initChoose() {
 	});
 }
 
+function inBattle() {
+	//if in a battle, send them straight there
+	if(ME.battleID) {
+		api("HasStarted", function(data) {
+			Battle.run(data);
+		});
+	}
+}
