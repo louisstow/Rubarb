@@ -59,34 +59,33 @@ function runMove(type, data, player, opponent, turn, callback) {
 	var anim = getAnimation(data.move.moveID),
 		msg, p1, p2, p1stats, p2stats;
 		
-	//decide who is ME and who is OPP
 	if(turn === data.p1) {
 		p1 = data.p1;
-		p1stats = data.p1stats || p1;
 		p2 = data.p2;
+		p1stats = data.p1stats || p1;
 		p2stats = data.p2stats || p2;
 	} else {
 		p1 = data.p2;
+		p2 =  data.p1;
 		p1stats = data.p2stats || p1;
-		p2 = data.p1;
 		p2stats = data.p1stats || p2;
 	}
 		
 	//determine the message to log
 	if(data.action === "missed") {
-		msg = p1.alienAlias + " missed";
+		msg = p2.alienAlias + " missed";
 	} else if(data.damage === 0) {
-		msg = p1.alienAlias + " used " + data.move.moveName;
+		msg = p2.alienAlias + " used " + data.move.moveName;
 	} else {
-		msg = narrate(data.damage, data.move.moveName, p1, p2)
+		msg = narrate(data.damage, data.move.moveName, p1, p2);
 	}
 	
 	log(msg, type);
 	
 	player.bind("AnimationEnd", function upd() {
 		//update the stats
-		if(p1) update(type, "left", p1, p1stats);
-		if(p2) update(type, "right", p2, p2stats);
+		if(p2) update(type, "left", p2, p2stats);
+		if(p1) update(type, "right", p1, p1stats);
 		
 		//if the move resulted in damage, play animations and effects
 		if(data.damage != 0) {
@@ -108,7 +107,7 @@ function narrate(damage, move, player, opp) {
 	var perc = ~~(damage / opp.maxHP * 100),
 		narr = "",
 		ext = (damage) ? " (-" + damage +"HP)" : "";
-		
+			
 	if(perc > 80) {
 		narr = " was shaken by ";
 	} else if(perc > 50) {

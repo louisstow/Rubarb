@@ -63,24 +63,19 @@ function initBattle(){
 			
 			api("Status", param, function(status) {
 				//only do something with a new status
-				console.log(LAST_STATUS, status.turn, LAST_STATUS == status.turn);
-				if(LAST_STATUS != status.turn && status.turn != ME.playerID) {
+				if(status && LAST_STATUS != status.turn) {
 					LAST_STATUS = status.turn;
-					console.log(status);
-					var turn, pA, oA;
 					
-					if(status.p1.playerID == ME.playerID) {
-						turn = status.p1;
-						pA = p1;
-						oA = p2;
-					} else {
-						turn = status.p2;
-						pA = p2;
-						oA = p1;
+					//only animate the other players turn, not mine
+					if(status.turn == ME.playerID) {
+						console.log("STAT", status);
+						return;
 					}
 					
+					var turn = (status.p1.playerID === ME.playerID) ? status.p2 : status.p1;
+					
 					LOCK = true;
-					runMove("battle", status, pA, oA, turn, function() {
+					runMove("battle", status, p2, p1, turn, function() {
 						LOCK = false;
 					});
 				}
