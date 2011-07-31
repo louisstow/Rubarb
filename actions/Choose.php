@@ -1,5 +1,5 @@
 <?php
-load("Aliens, Species");
+load("Alien, Species, Energy");
 data("choice");
 
 if($me->status !== "new") {
@@ -30,6 +30,8 @@ $alien->maxHP = 22;
 $alien->status = 'carried';
 
 $alien->update();
+Energy::init(ORM::lastID());
+
 $me->status = "online";
 $me->update();
 

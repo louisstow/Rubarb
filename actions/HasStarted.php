@@ -2,7 +2,12 @@
 load("Alien, Battle, BattlePVP, BattleSnapshot");
 data("battle");
 
-$battle = I("Battle")->get($battle);
+if(isset($battle)) {
+	$battle = I("Battle")->get($battle);
+} else {
+	$battle = I("Battle")->get($me->battleID);
+}
+
 if(!$battle) {
 	error("Battle doesn&apos;t exist");
 }

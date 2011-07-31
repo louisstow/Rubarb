@@ -40,10 +40,10 @@ function initTraining(){
 					console.log(result);
 					var anim;
 					
-					runMove("train", result[0], alien, opp, result[0].p1, function() {
+					runMove("train", result[0], alien, opp, "p1", "p2", function() {
 						//wait between 1 - 2s for running the next move
 						setTimeout(function() {
-							runMove("train", result[1], opp, alien, result[1].p2, function() {
+							runMove("train", result[1], opp, alien, "p2", "p1", function() {
 								LOCK = false;
 							});
 						}, Crafty.randRange(1000, 2000));

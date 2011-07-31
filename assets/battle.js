@@ -1,6 +1,6 @@
 function initBattle(){
 	var $battlelist = $("#battle-list"),
-		p1,	p2;
+		leftEnt, rightEnt;
 	
 	$("#battle-menu a.forfeit").click(function() {
 		api("Forfeit", function() {
@@ -10,44 +10,48 @@ function initBattle(){
 
 	this.bind("Run", function(data) {
 		
-		var alienInfo = IDtoAlien[data.p1.species],
-			oppInfo = IDtoAlien[data.p2.species],
+		var p1Info = IDtoAlien[data.p1.species],
+			p2Info = IDtoAlien[data.p2.species],
+			
 			$list = $("#battle-list .inner"),
 			$pop = $("#battle-pop"),
+			
 			param = data.battle.type === "pvp" ? {} : {battle: data.battle.battleID},
+			
 			LAST_STATUS,
-			STARTED = (data.battle.status === "accepted"),
-			TURN = data.battle.turn,
-			me,
-			opp;
+			
+			title, otitle,
+			
+			me, opp,
+			STARTED = (data.battle.status === "accepted");
 			
 		//show me on the right
 		if(data.p1.playerID === ME.playerID) {
-			p1 = Crafty.e("Alien").Alien(alienInfo.name);
-			p2 = Crafty.e("Alien").Alien(oppInfo.name);
+			leftEnt = Crafty.e("Alien").Alien(p1Info.name);
+			rightEnt = Crafty.e("Alien").Alien(p2Info.name);
 			
-			me = data.p1;
-			opp = data.p2;
-			
-			update("battle", "left", data.p1);
-			update("battle", "right", data.p2);
+			title = "p1";
+			otitle = "p2";
 		} else {
-			p2 = Crafty.e("Alien").Alien(alienInfo.name);
-			p1 = Crafty.e("Alien").Alien(oppInfo.name);
+			rightEnt = Crafty.e("Alien").Alien(p1Info.name);
+			leftEnt = Crafty.e("Alien").Alien(p2Info.name);
 			
-			me = data.p2;
-			opp = data.p1;
-			
-			update("battle", "left", data.p2);
-			update("battle", "right", data.p1);
+			title = "p2";
+			otitle = "p1";
 		}
+		
+		me = data[title];
+		opp = data[otitle];
+		
+		update("battle", "left", data[title]);
+		update("battle", "right", data[otitle]);
 			
 		//position the aliens
-		p1.flip();
-		p1.position(200, 200);
-		p2.position(600, 200);
+		leftEnt.flip();
+		leftEnt.position(200, 200);
+		rightEnt.position(600, 200);
 		
-		if(data.battle.status === "waiting") p2.inactive();
+		if(data.battle.status === "waiting") rightEnt.inactive();
 		
 		function clicker() {
 			//if we haven't started, keep polling
@@ -55,27 +59,47 @@ function initBattle(){
 				api("HasStarted", param, function(resp) {
 					if(resp.battle && resp.battle.status === "accepted") {
 						STARTED = true;
-						p2.active();
+						rightEnt.active();
 					}
 				});
 				return;
 			}
 			
 			api("Status", param, function(status) {
+				if(!status) {
+					console.log(status);
+					return;
+				}
+				
+				LOCK = false;
+				//if inactive;
+				if(status.action === "inactive") {
+					if(LAST_STATUS !== "inactive") {
+						if(status.turn == ME.playerID) {
+							LOCK = true;
+							log("You were inactive, skipped turn", "battle");
+						} else {
+							log("Opponent inactive, your turn", "battle");
+							LOCK = false;
+						}
+					}
+					
+					LAST_STATUS = "inactive";
+					return;
+				}
+				
 				//only do something with a new status
-				if(status && LAST_STATUS != status.turn) {
+				if(LAST_STATUS != status.turn) {
 					LAST_STATUS = status.turn;
 					
 					//only animate the other players turn, not mine
 					if(status.turn == ME.playerID) {
-						console.log("STAT", status);
+						console.log("MY DATA", status);
 						return;
 					}
 					
-					var turn = (status.p1.playerID === ME.playerID) ? status.p2 : status.p1;
-					
 					LOCK = true;
-					runMove("battle", status, p2, p1, turn, function() {
+					runMove("battle", status, rightEnt, leftEnt, otitle, title, function() {
 						LOCK = false;
 					});
 				}
@@ -90,13 +114,12 @@ function initBattle(){
 				var indicator = $(this).find("b:first"),
 					id = $(this).attr("data-id"),
 					param = (data.battle.type == "pvp") ? {move: id} : {move: id, battle: data.battle.battleID};
-					
-				indicator.html(Crafty.n(indicator.text()) - 1);
 				
 				api("Attack", param, function(resp) {
-					var turn = resp.p1.playerID === ME.playerID ? resp.p1 : resp.p2;
+					//decrement if success
+					indicator.html(Crafty.n(indicator.text()) - 1);
 					
-					runMove("battle", resp, p1, p2, turn, function() {
+					runMove("battle", resp, leftEnt, rightEnt, title, otitle, function() {
 						LOCK = false;
 					});
 				});
@@ -107,8 +130,8 @@ function initBattle(){
 		
 	}).bind("Exit", function() {
 		//remove the entities
-		if(p1) p1.destroy();
-		if(p2) p2.destroy();
+		leftEnt.destroy();
+		rightEnt.destroy();
 		
 		Crafty.unbind("Clock");
 	});

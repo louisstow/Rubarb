@@ -60,5 +60,21 @@ class BattleSnapshot extends ORM {
 		
 		return $data;
 	}
+	
+	
+	/**
+	* Get the next alien available from a player. If none left,
+	* then return FALSE.
+	*/
+	public static function getNext($user, $alien=NULL) {
+		//grab the first alien the user is carrying
+		$q = ORM::query("SELECT alienID FROM battle_snapshot WHERE playerID = ? AND status = 'carried' AND alienID <> ? ORDER BY alienOrder LIMIT 1", 
+			array($user, $alien));
+		$data = $q->fetch(PDO::FETCH_ASSOC);
+		
+		if($data) {
+			return $data['alienID'];
+		} else return false;
+	}
 }
 ?>

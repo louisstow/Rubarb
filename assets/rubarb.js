@@ -45,6 +45,11 @@ $(function() {
 			} else {
 				//else set the data to ME
 				ME = data;
+				
+				if(ME.status === "new") {
+					Choose.run();
+				}
+				
 				inBattle();
 			}
 		}, false);
@@ -100,17 +105,19 @@ function pull(list) {
 		i = 0, ids = list.split(/\s*,\s*/), l = ids.length,
 		elem;
 		
+	
 	for(;i < l; ++i) {
+		
 		elem = document.getElementById(ids[i]);
 		
 		//remove from the tree
 		if(elem) {
 			elem.parentNode.removeChild(elem);
+			frag.appendChild(elem);
 		} else {
-			console.log(elem, ids[i], i);
+			console.log($("#"+ids[i]));
+			console.log(elem, "[" + ids[i] + "]", i);
 		}
-		
-		frag.appendChild(elem);
 	}
 	
 	return frag;

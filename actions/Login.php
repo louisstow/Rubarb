@@ -11,7 +11,11 @@ if($result->count()) {
 	$arr = $arr[0];
 	
 	$_SESSION['id'] = $arr->playerID;
-	$arr->status = "online";
+	
+	if($arr->status === "new") {
+		$arr->status = "online";
+	}
+	
 	$arr->update();
 	
 	unset($arr->playerPass);

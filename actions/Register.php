@@ -15,6 +15,8 @@ if(!$player) {
 	error("Error registering");
 }
 
+$_SESSION['id'] = $player->playerID;
+
 unset($player->playerPass);
 unset($player->_updateFlag);
 echo json_encode($player);

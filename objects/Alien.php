@@ -23,9 +23,10 @@ class Alien extends ORM {
 	* Get the next alien available from a player. If none left,
 	* then return FALSE.
 	*/
-	public static function getNext($user) {
+	public static function getNext($user, $alien=-1) {
 		//grab the first alien the user is carrying
-		$q = ORM::query("SELECT alienID FROM aliens WHERE playerID = ? AND status = 'carried' ORDER BY alienOrder LIMIT 1", array($user));
+		$q = ORM::query("SELECT alienID FROM aliens WHERE playerID = ? AND status = 'carried' AND alienID <> ? ORDER BY alienOrder LIMIT 1", 
+			array($user, $alien));
 		$data = $q->fetch(PDO::FETCH_ASSOC);
 		
 		if($data) {

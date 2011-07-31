@@ -8,6 +8,9 @@ function initLogin() {
 	
 		api("Login", data, function(data) {
 			ME = data;
+			if(ME.status === "new") {
+				Choose.run();
+			}
 			inBattle();
 		});
 	});

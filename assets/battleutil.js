@@ -54,38 +54,35 @@ function update(type, side, data, stats) {
 * @param turn Who is P1 and who is P2
 * @param callback Function to be called when move done
 */
-function runMove(type, data, player, opponent, turn, callback) {
+function runMove(type, data, player, opponent, actor, recv, callback) {
 	//play the animation
 	var anim = getAnimation(data.move.moveID),
-		msg, p1, p2, p1stats, p2stats;
-		
-	if(turn === data.p1) {
-		p1 = data.p1;
-		p2 = data.p2;
-		p1stats = data.p1stats || p1;
-		p2stats = data.p2stats || p2;
-	} else {
-		p1 = data.p2;
-		p2 =  data.p1;
-		p1stats = data.p2stats || p1;
-		p2stats = data.p1stats || p2;
-	}
+		msg, 
+		alien = data[actor], 
+		opp = data[recv], 
+		alienstats = data[actor + "stats"] || alien, 
+		oppstats = data[recv + "stats"] || opp;
 		
 	//determine the message to log
 	if(data.action === "missed") {
-		msg = p2.alienAlias + " missed";
+		msg = alien.alienAlias + " missed";
 	} else if(data.damage === 0) {
-		msg = p2.alienAlias + " used " + data.move.moveName;
+		msg = alien.alienAlias + " used " + data.move.moveName;
 	} else {
-		msg = narrate(data.damage, data.move.moveName, p1, p2);
+		msg = narrate(data.damage, data.move.moveName, alien, opp);
 	}
 	
 	log(msg, type);
 	
 	player.bind("AnimationEnd", function upd() {
 		//update the stats
-		if(p2) update(type, "left", p2, p2stats);
-		if(p1) update(type, "right", p1, p1stats);
+		if(alien.playerID == ME.playerID) {
+			if(alien) update(type, "left", alien, alienstats);
+			if(opp) update(type, "right", opp, oppstats);
+		} else {
+			if(opp) update(type, "left", opp, oppstats);
+			if(alien) update(type, "right", alien, alienstats);
+		}
 		
 		//if the move resulted in damage, play animations and effects
 		if(data.damage != 0) {
@@ -143,6 +140,31 @@ function effect(type, origin) {
 	for(;i < amount; ++i) {
 		Crafty.e("Effect").Effect(type, origin);
 	}
+}
+
+function win(awards) {
+	
+}
+
+function lose() {
+	var curtain = Crafty.e("2D, DOM, Color, Tween")
+		.color("black")
+		.attr({alpha: 0, w: 800, h: 600});
+		
+		
+	var text = Crafty.e("2D, DOM, Text, Tween, statement")
+		.attr({x: 100, y: 200, alpha: 0, w: 400})
+		.text("You were defeated")
+		.css("color", "#fff")
+		.tween({alpha: 1.0}, 100);
+		
+	curtain.bind("TweenEnd", function() {
+		this.delay(function() {
+			this.destroy();
+			text.destroy();
+			Lobby.run();
+		}, 1000);
+	}).tween({alpha: 1.0}, 100);
 }
 
 Crafty.c("Effect", {

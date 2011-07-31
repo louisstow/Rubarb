@@ -62,6 +62,11 @@ body {
 	-ms-filter: "FlipH";
 }
 
+.statement {
+	font-size: 30px;
+	
+}
+
 a {
 	cursor: pointer;
 }

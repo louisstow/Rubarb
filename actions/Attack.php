@@ -81,6 +81,7 @@ $log = array();
 if($chance < 1 && $move->hpOpp) {
 	$log['action'] = "missed";
 	$log['move'] = clone $move;
+	$log['turn'] = $battle->turn;
 	$log[$title] = clone $p;
 	
 	I("BattleLog")->create($battle->battleID, NOW(), json_encode($log));
@@ -94,12 +95,16 @@ if($chance < 1 && $move->hpOpp) {
 		$o->hp = 0;
 		$o->status = "fainted";
 		
-		$next = Alien::getNext($o->playerID);
+		if($battle->type == "test") {
+			$next = Alien::getNext($o->playerID, $o->alienID);
+		} else {
+			$next = BattleSnapshot::getNext($o->playerID, $o->alienID);
+		}
 		
 		//swap the opponents alien with the next
 		if($next) {
 			$pvp->{$opp . "Alien"} = $next;
-			
+			$log['replace'] = I("Alien")->get($next);
 		} else {
 			//WINNER
 			$awards = Battle::award($p, $o);
@@ -123,6 +128,7 @@ if($chance < 1 && $move->hpOpp) {
 	$log['turn'] = $battle->turn;
 	$log[$title] = clone $p;
 	$log[$otitle] = clone $o;
+	
 	if($battle->type == "pvp") {
 		$log[$title."stats"] = clone $ptemp;
 		$log[$otitle."stats"] = clone $otemp;
@@ -130,8 +136,12 @@ if($chance < 1 && $move->hpOpp) {
 	
 	$p->update();
 	$o->update();
-	$ptemp->update();
-	$otemp->update();
+	
+	//only update if not test match
+	if($battle->type != "test") {
+		$ptemp->update();
+		$otemp->update();
+	}
 	
 	//log the action
 	I("BattleLog")->create($battle->battleID, NOW(), json_encode($log));
