@@ -104,7 +104,7 @@ class Battle extends ORM {
 			$player->speed = $level * 1.6 + ceil($sdiff * 0.5);
 			
 			$moves = Energy::newMoves($player->alienID, $player->level);
-			Energy::init();
+			Energy::init($player->alienID);
 		}
 		
 		//return an array of achievements
@@ -132,6 +132,17 @@ class Battle extends ORM {
 			array($user));
 			
 		return ORM::fetchAll($q);
+	}
+	
+	/**
+	* Check an existing battle
+	*/
+	public static function existant($user, $friend) {
+		$q = ORM::query("SELECT battleID FROM battle_pvp WHERE (playerID = :p AND opponentID = :o) OR (opponentID = :p AND playerID = :o)",
+			array("p" => $user, "o" => $friend));
+			
+		$data = $q->fetch(PDO::FETCH_ASSOC);
+		return !!$data;
 	}
 }
 ?>

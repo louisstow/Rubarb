@@ -87,6 +87,7 @@ function api(action, data, callback, showError) {
 			var data = eval('('+data+')');
 			} catch(err) {
 				console.log(data);
+				return;
 			}
 			
 			//if there is an error, automaticall display

@@ -1,5 +1,5 @@
 <?php
-load("Alien, Battle, BattlePVP, BattleSnapshot, BattleLog, Player");
+load("Alien, Battle, BattlePVP, BattleSnapshot, BattleLog, Player, Energy");
 data("battle");
 
 if(isset($battle)) {
@@ -26,40 +26,31 @@ $opp = (USER == $pvp->playerID) ? "opponent" : "player";
 $opponent = I("Player")->get($pvp->{$opp . "ID"});
 
 //grab the instance of the aliens
-if($battle->type == "pvp") {
-	$p = I("Alien")->get($pvp->{$title . "Alien"});
-	$o = I("Alien")->get($pvp->{$opp . "Alien"});
-} else if($battle->type == "test") {
-	$p = I("BattleSnapshot")->get($battle->battleID, $pvp->{$title . "Alien"});
-	$o = I("BattleSnapshot")->get($battle->battleID, $pvp->{$opp . "Alien"});
-}
+$p = I("Alien")->get($pvp->{$title . "Alien"});
+$o = I("Alien")->get($pvp->{$opp . "Alien"});
 
-//calculate the differences in stats
-$adiff = ($p->attack - $o->attack) < 0 ? 0 : $p->attack - $o->attack;
-$ddiff = ($p->defense - $o->defense) < 0 ? 0 : $p->defense - $o->defense;
-$sdiff = ($p->speed - $o->speed) < 0 ? 0 : $p->speed - $o->speed;
-
-$opponent->money += ceil(($adiff + $ddiff + $sdiff) * 5 + 100);
-$opponent->wins++;
-$o->attack += ceil(($adiff * 0.5) + 10);
-$o->defense += ceil(($ddiff * 0.5) + 10);
-$o->speed += ceil(($sdiff * 0.5) + 10);
-
-//increase level based on the average of the stats
-$level = ceil(($o->attack + $o->defense + $o->speed) / 3 * 0.1);
-if($level > $o->level) {
-	$o->level = $level;
-}
-
-$o->exp += $level * 5;
+$awards = Battle::award($o, $p);
 
 //update the loses for the opponent
 $me->loses++;
-$me->update();
-$o->update();
+$opponent->wins++;
 
-$oj = json_encode($o);
-I("BattleLog")->create($battle->battleID, NOW(), "{a: 'forfeit', w: {$me->playerID}, o: {$oj}}");
+if($battle->type == "pvp") {
+	$me->battleID = NULL;
+	$opponent->battleID = NULL;
+}
+
+$opponent->update();
+$me->update();
+
+
+$log = array (
+	"action" => "forfeit",
+	"turn" => $me->playerID,
+	"win" => $awards
+);
+
+I("BattleLog")->create($battle->battleID, NOW(), json_encode($log));
 
 $battle->remove();
 

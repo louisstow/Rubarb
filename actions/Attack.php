@@ -95,7 +95,7 @@ if($chance < 1 && $move->hpOpp) {
 		$o->hp = 0;
 		$o->status = "fainted";
 		
-		if($battle->type == "test") {
+		if($battle->type == "pvp") {
 			$next = Alien::getNext($o->playerID, $o->alienID);
 		} else {
 			$next = BattleSnapshot::getNext($o->playerID, $o->alienID);
@@ -112,9 +112,11 @@ if($chance < 1 && $move->hpOpp) {
 			//update the loses for the opponent
 			$opponent = I("Player")->get($oID);
 			$opponent->loses++;
+			if($opponent->battleID == $battle->battleID) $opponent->battleID = NULL;
 			$opponent->update();
 			
 			$me->wins++;
+			if($me->battleID == $battle->battleID) $me->battleID = NULL;
 			$me->update();
 			$battle->remove();
 			

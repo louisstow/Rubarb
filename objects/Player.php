@@ -12,7 +12,9 @@ class Player extends ORM {
 		"loses" => INT,
 		"money" => INT,
 		"status" => STRING,
-		"location" => STRING
+		"location" => STRING,
+		"battleID" => INT,
+		"lastActive" => DATE
 	);
 	
 	public static function online($area) {
@@ -20,6 +22,10 @@ class Player extends ORM {
 			array(USER, $area));
 			
 		return ORM::fetchAll($q);
+	}
+	
+	public static function makeOffline() {
+		ORM::query("UPDATE players SET status = 'offline' WHERE DATE_ADD(lastActive, INTERVAL 1 HOUR) < ? AND status = 'online'", array(NOW()));
 	}
 }
 ?>

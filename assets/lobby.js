@@ -13,8 +13,8 @@ function initLobby() {
 			for(;i < l; ++i) {
 				player = data.friends[i];
 				html += "<div class='player list' data-id='"+player.playerID+"'><h3>"+player.screenName+"</h3>";
-				html += "<div class='actions'><a class='battle pvp'>PVP</a> <a class='battle test'>Test</a></div>";
-				html += "<span>Wins: <b>"+player.wins+"</b></span> <span>Loses: <b>"+player.loses+"</b>";
+				html += "<div class='actions'><a class='battle pvp'>PVP</a> <a class='battle test'>Test</a> <a class='unfriend'>Unfriend</a></div>";
+				html += "<span>Wins: <b>"+player.wins+"</b></span> <span>Loses: <b>"+player.loses+"</b> <span>Status: <b>"+player.status+"</b></span></div>";
 			}
 			$friends.html(html);
 			
@@ -23,7 +23,7 @@ function initLobby() {
 			for(i = 0, l = data.all.length; i < l; ++i) {
 				player = data.all[i];
 				html += "<div class='player list' data-id='"+player.playerID+"'><h3>"+player.screenName+"</h3>";
-				html += "<div class='actions'><a class='battle pvp'>PVP</a> <a class='battle test'>Test</a></div>";
+				html += "<div class='actions'><a class='battle pvp'>PVP</a> <a class='battle test'>Test</a> <a class='friend'>Friend</a></div>";
 				html += "<span>Wins: <b>"+player.wins+"</b></span> <span>Loses: <b>"+player.loses+"</b></div>";
 			}
 			

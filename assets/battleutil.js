@@ -55,6 +55,14 @@ function update(type, side, data, stats) {
 * @param callback Function to be called when move done
 */
 function runMove(type, data, player, opponent, actor, recv, callback) {
+	if(data.action === "forfeit") {
+		return win(data.win, "Opponent Forfeit");
+	} else if(data.action === "item") {
+		log(data.alien.alienAlias + " used " + data.item.itemName, type);
+		update(type, (data.turn === ME.playerID ? "left" : "right"), data.alien);
+		return;
+	}
+	
 	//play the animation
 	var anim = getAnimation(data.move.moveID),
 		msg, 
@@ -85,16 +93,35 @@ function runMove(type, data, player, opponent, actor, recv, callback) {
 		}
 		
 		//if the move resulted in damage, play animations and effects
-		if(data.damage != 0) {
+		if(data.action !== "missed") {
 			effect(data.move.moveType, opponent);
-			opponent.run("recoil");
+			if(data.replace) {
+				opponent.bind("AnimationEnd", function() {
+					opponent.unbind("AnimationEnd");
+					if(callback) callback();
+				});
+				
+				opponent.run("faint");
+			} else {
+				opponent.run("recoil");
+			}
 		}
 		
 		//clean up
 		this.unbind("AnimationEnd", upd);
 		
+		//if someone won
+		if(data.win) {
+			if(data.turn == ME.playerID) {
+				win(data.win, "You Win");
+			} else {
+				lose();
+			}
+			return;
+		}
+		
 		//execute a callback
-		if(callback) callback();
+		if(callback && !data.replace) callback();
 	});
 	
 	player.run(anim);
@@ -142,8 +169,44 @@ function effect(type, origin) {
 	}
 }
 
-function win(awards) {
+var ticker = false;
+function timer(turn) {
+	var $timer = $("#battle-center"),
+		i = 300;
 	
+	//stop existing ticker
+	if(ticker) {
+		clearInterval(ticker);
+	}
+	
+	if(turn) {
+		$timer.css("background", "blue");
+	} else {
+		$timer.css("background", "orange");
+	}
+	
+	ticker = setInterval(function() {
+		i--;
+		var min = ~~(i / 60),
+			sec = i % 60;
+		
+		//timer ran out
+		if(i < 1) {
+			Crafty.trigger("TimerUp");
+			$timer.html("Time Up");
+			clearInterval(ticker);
+			return;
+		}
+		
+		$timer.html(min + ":" + Crafty.zeroFill(sec, 2));
+	}, 1000);
+}
+
+function win(awards, how) {
+	//stop the clock
+	Crafty.unbind("Clock");
+	
+	console.log("YOU FUCKING WIN", how, awards);
 }
 
 function lose() {
@@ -200,6 +263,21 @@ function listAttacks(parent, alien, callback) {
 			move = moves[i];
 			html += "<div class='move list' data-id='"+move.moveID+"'><h3>"+move.moveName+"</h3>Left: <b>"+move.amount+"</b> / <b>"+move.maxAmount+"</b> ";
 			html += "Type: <b>"+move.moveType+"</b></div>";
+		}
+		
+		parent.html(html);
+		callback.call(parent);
+	});
+}
+
+function listItems(parent, callback) {
+	api("GetItems", function(items) {
+		var i = 0, l = items.length, item, html = "";
+		
+		for(;i < l; ++i) {
+			item = items[i];
+			html += "<div class='item list' data-id='"+item.itemID+"'><h3>"+item.itemName+"</h3>Left: <b>"+item.quantity+"</b> ";
+			html += item.itemDescr+"</div>";
 		}
 		
 		parent.html(html);

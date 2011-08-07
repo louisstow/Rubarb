@@ -68,7 +68,7 @@ class BattleSnapshot extends ORM {
 	*/
 	public static function getNext($user, $alien=NULL) {
 		//grab the first alien the user is carrying
-		$q = ORM::query("SELECT alienID FROM battle_snapshot WHERE playerID = ? AND status = 'carried' AND alienID <> ? ORDER BY alienOrder LIMIT 1", 
+		$q = ORM::query("SELECT alienID FROM battle_snapshot WHERE playerID = ? AND alienID <> ? AND hp > 0 LIMIT 1", 
 			array($user, $alien));
 		$data = $q->fetch(PDO::FETCH_ASSOC);
 		

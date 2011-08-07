@@ -10,6 +10,10 @@ if($friend == USER) {
 	error("Stop playing with yourself");
 }
 
+if(Battle::existant($me->playerID, $friend)) {
+	error("Already in battle with that player");
+}
+
 $alien = I("Alien")->get(Alien::getNext(USER));
 $opp = I("Alien")->get(Alien::getNext($friend));
 

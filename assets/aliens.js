@@ -119,6 +119,16 @@ Crafty.c("Alien", {
 		this.parent = document.createElement("div");
 		this.parent.style.position = "absolute";
 		Crafty.stage.inner.appendChild(this.parent);
+		
+		this.bind("Remove", function() {
+			if(this.head) this.head.destroy();
+			if(this.body) this.body.destroy();
+			if(this.tail) this.tail.destroy();
+			if(this.front) this.front.destroy();
+			if(this.back) this.back.destroy();
+			
+			Crafty.stage.inner.removeChild(this.parent);
+		});
 	},
 	
 	Alien: function(type) {

@@ -1,5 +1,5 @@
 <?php
-load("Item, Inventory, Alien");
+load("Item, Inventory, Alien, Battle, BattleLog, BattleSnapshot, BattlePVP");
 data("item, alien, battle");
 
 $inv = I("Inventory")->get(USER, $item);
@@ -37,13 +37,34 @@ $alien->defense += $item->defense;
 $alien->speed += $item->speed;
 $alien->exp += $item->exp;
 $alien->hp += $item->hp;
+
+//cap the health
+if($alien->hp > $alien->maxHP) {
+	$alien->hp = $alien->maxHP;
+}
+
 $alien->update();
+
+$log = array(
+	"action" => "item",
+	"item" => $item,
+	"turn" => $me->playerID,
+	"alien" => $alien
+);
 
 //log the use of the item
 if($me->battleID || isset($battle)) {
-	$aj = json_encode($alien);
-	$item = $item->itemName;
-	I("BattleLog")->create($battle->battleID, NOW(), "{a: 'item', i: '{$item}', w: {$aj}}");
+	I("BattleLog")->create($battle->battleID, NOW(), json_encode($log));
+	$pvp = I("BattlePVP")->get($battle->battleID);
+	
+	//alternate the turn
+	$battle->turn = (USER == $pvp->playerID) ? $pvp->opponentID : $pvp->playerID;
+	$battle->update();
+
+	//update last active
+	$title = (USER == $pvp->playerID) ? "player" : "opponent";
+	$pvp->{$title . "Active"} = NOW();
+	$pvp->update();
 }
 
 //decrement the quantity
@@ -54,5 +75,5 @@ if($inv->quantity <= 0) {
 	$inv->update();
 }
 
-ok();
+echo json_encode($log);
 ?>

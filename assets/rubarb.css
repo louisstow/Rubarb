@@ -3,10 +3,8 @@ body {
 }
 
 #cr-stage {
-	
 	margin:auto;
 	font-family: Arial;
-	
 	-moz-box-shadow: 0 0 15px #aaa;
 	-webkit-box-shadow: 0 0 15px #aaa;
 	box-shadow: 0 0 15px #aaa;
@@ -63,8 +61,7 @@ body {
 }
 
 .statement {
-	font-size: 30px;
-	
+	font-size: 30px;	
 }
 
 a {
@@ -106,7 +103,7 @@ a.active {
 
 .forfeit {
 	float: right;
-	margin-top:-20px;
+	margin:-20px 0 0 5px;
 	background: #FF4545;
 	color: #fff;
 }
@@ -171,7 +168,10 @@ a.active {
 	clear:both;
 }
 
-#train-left h2, #train-right h2, #battle-left h2, #battle-right h2 { float:left; margin-left:5px; }
+#train-left h2, #train-right h2, #battle-left h2, #battle-right h2 { 
+	float:left; 
+	margin-left:5px; 
+}
 
 #battle-menu, #train-menu {
 	width:500px;
@@ -181,6 +181,22 @@ a.active {
 	left: 150px;
 	position:absolute;
 	padding:5px;
+}
+
+#battle-center {
+	position: absolute; 
+	width: 100px; 
+	height: 40px; 
+	left: 345px;
+	top: 5px;
+	text-align: center;
+	border-radius: 30px;
+	-moz-border-radius: 30px;
+	-webkit-border-radius: 30px;
+	-o-border-radius: 30px;
+	-ms-border-radius: 30px;
+	line-height: 35px;
+	color: white;
 }
 
 #train-list, #battle-list {

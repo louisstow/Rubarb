@@ -18,6 +18,14 @@ if(!isset($_SESSION['id'])) {
 } else {
 	load("Player");
 	$me = I("Player")->get(USER);
+	
+	//update the users last active status
+	$me->lastActive = NOW();
+	if($me->status === "offline") {
+		$me->status = "online";
+	}
+	
+	$me->update();
 }
 
 include "actions/" . $a . ".php";
